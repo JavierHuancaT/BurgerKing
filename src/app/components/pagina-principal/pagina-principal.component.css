@@ -14,7 +14,7 @@
   display: flex;
   justify-content: center;
   text-align: center;
-  margin-left: -65px;
+  margin-left: -105px;
 }
 
 /* Estilo del logo */
@@ -200,4 +200,3 @@
 .nav-item:hover {
   color: #ff0000;
 }
-
