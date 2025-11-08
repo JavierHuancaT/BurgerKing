@@ -1,0 +1,203 @@
+/* Estilo del header */
+.custom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Contenedor centrado del logo */
+.logo-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-left: -65px;
+}
+
+/* Estilo del logo */
+.logo-img {
+  height: 65px;
+  object-fit: contain;
+}
+
+/* Seccion de acciones del usuario */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Imagen del carrito */
+.cart-img {
+  width: 35px;
+  object-fit: contain;
+}
+
+/* Boton de registro */
+.btn-register {
+  min-width: 100px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #0d6efd;
+  background-color: transparent;
+  color: #0d6efd;
+  border-radius: 0.2rem;
+  font-size: 0.875rem;
+}
+
+/* Boton de inicio de sesion */
+.btn-login {
+  min-width: 100px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #212529;
+  background-color: transparent;
+  color: #212529;
+  border-radius: 0.2rem;
+  font-size: 0.875rem;
+}
+
+/* Estilo del texto 'Combos' */
+.combos-header {
+  text-align: center;
+  margin: 2rem 0 1rem;
+}
+
+/* Título del texto 'Combos'*/
+.combos-header h2 {
+  font-weight: bold;
+}
+
+/* Contenedor general de los combos */
+.combos-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Grid flexible para los combos */
+.combos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Espacio individual para cada combo */
+.combo-wrapper {
+  margin-bottom: 20px;
+}
+
+/* Tarjeta de combo individual */
+.combo-card {
+  background-color: #fff;
+  transition: transform 0.2s ease;
+  width: 100%;
+  max-width: 280px;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
+}
+
+/* Efecto hover para tarjetas */
+.combo-card:hover {
+  transform: scale(1.03);
+}
+
+/* Hover en boton registrarse */
+.btn-register:hover {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+/* Hover en boton iniciar sesion */
+.btn-login:hover {
+  background-color: #212529;
+  color: white;
+  border-color: #212529;
+}
+
+/* Imagen del combo */
+.combo-img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+/* Descripcion del combo */
+.combo-description {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Precio del combo */
+.combo-price {
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 0;
+}
+
+/* Estilo de las redes sociales */
+.social-section {
+  text-align: center;
+  margin: 3rem 0;
+}
+
+/* Titulo de las redes sociales */
+.social-section h5 {
+  margin-bottom: 1rem;
+}
+
+/* Contenedor horizontal de los iconos */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Tamaño para los iconos de las redes sociales */
+.social-img {
+  height: 40px;
+}
+
+/* Navegacion principal */
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Estilo individual para cada item */
+.nav-item {
+  background: none;
+  border: none;
+  outline: none;
+  font-weight: bold;
+  color: #5c1a00;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+}
+
+/* Footer */
+.footer-custom {
+  background-color: #fff3e0;
+  color: #5c1a00;
+  font-weight: 500;
+  font-size: 14px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+/* Efecto hover  */
+.nav-item:hover {
+  color: #ff0000;
+}
+
