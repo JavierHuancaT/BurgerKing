@@ -1,59 +1,98 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { User, UserRole } from '../app/models/user.model';
+import { User, UserRole } from '../shared/models/user.model';
 
+/**
+ * Tipo interno que simula la tabla completa de la BD,
+ * incluyendo el password solo para este servicio.
+ */
+type UserWithPassword = User & { passwordHash: string };
+
+/**
+ * Servicio de Autenticación (AuthService).
+ * Maneja la lógica de login, logout y el estado de la sesión (HDU2).
+ * Es un singleton provisto en 'root'.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  // Este 'BehaviorSubject' es clave. Almacena al usuario actual
-  // y permite que otros componentes (como el Header) escuchen los cambios.
+  // --- (BD PROVISORIA) ---
+  /**
+   * Simulación de la "tabla de usuarios" (BD Provisoria).
+   * Basado en experiencia con SQL, usamos un array de objetos
+   * en lugar de 'if' anidados para una lógica más limpia.
+   * (Requerimiento de HDU2: "registro previamente guardado").
+   */
+  private userDatabase: UserWithPassword[] = [
+    { 
+      id: '1', 
+      email: 'admin@admin.cl', 
+      passwordHash: 'admin123', // En un caso real, esto sería un hash
+      name: 'Admin Burger', 
+      role: 'Admin' 
+    },
+    { 
+      id: '2', 
+      email: 'cliente@cliente.cl', 
+      passwordHash: 'cliente123',
+      name: 'Cliente Frecuente', 
+      role: 'Client' 
+    }
+  ];
+  // --- FIN BD PROVISORIA ---
+
+  /**
+   * BehaviorSubject que almacena el estado actual del usuario (null si está desconectado).
+   * Es privado para que solo el servicio pueda emitir nuevos valores.
+   */
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+
+  /**
+   * Observable público del estado del usuario.
+   * Otros componentes (como el Header) se suscribirán a este
+   * para reaccionar a los cambios de sesión (HDU3).
+   */
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
   constructor() { }
 
   /**
-   * (HDU2) Simula el login contra la BD provisoria.
+   * Valida las credenciales del usuario contra la BD simulada.
+   * (Cumple criterios de HDU2).
+   * @param email El email ingresado por el usuario.
+   * @param password El password ingresado por el usuario.
+   * @returns Un Observable<User | null> - El objeto User si es exitoso, o null si falla.
    */
   login(email: string, password: string): Observable<User | null> {
 
-    // --- BASE DE DATOS PROVISORIA ---
-    if (email === 'admin@admin.cl' && password === 'admin123') {
-      const adminUser: User = {
-        id: '1',
-        email: 'admin@admin.cl',
-        name: 'Admin Burger',
-        role: 'Admin'
-      };
-      
-      // Notifica a toda la app que el Admin se logueó
-      this.currentUserSubject.next(adminUser);
-      return of(adminUser); // Devuelve el usuario
-    }
+    // Simula un "SELECT * FROM users WHERE email = ... AND password = ..."
+    const userFound = this.userDatabase.find(
+      user => user.email === email && user.passwordHash === password
+    );
 
-    if (email === 'cliente@cliente.cl' && password === 'cliente123') {
-      const clientUser: User = {
-        id: '2',
-        email: 'cliente@cliente.cl',
-        name: 'Cliente Frecuente',
-        role: 'Client'
-      };
+    if (userFound) {
+      // Éxito.
+      // Desestructura para quitar el passwordHash del objeto de sesión.
+      const { passwordHash, ...userSessionData } = userFound;
       
-      // Notifica a toda la app que el Cliente se logueó
-      this.currentUserSubject.next(clientUser);
-      return of(clientUser);
+      // Emite el nuevo estado (usuario logueado) a todos los suscriptores.
+      this.currentUserSubject.next(userSessionData);
+      // Retorna el usuario (usando 'of' para crear un Observable).
+      return of(userSessionData);
+    } else {
+      // Falla (Criterio HDU2: Credenciales incorrectas).
+      return of(null);
     }
-    // --- FIN BD PROVISORIA ---
-
-    // (Criterio HDU2: Credenciales incorrectas)
-    return of(null);
   }
 
-  // (Criterio HDU3: Botón "Cerrar Sesión")
+  /**
+   * Cierra la sesión del usuario.
+   * (Cumple criterio de HDU3: "botón Cerrar Sesión").
+   */
   logout(): void {
-    // Notifica a la app que no hay nadie logueado
+    // Emite 'null' para notificar a la app que el usuario cerró sesión.
     this.currentUserSubject.next(null);
   }
 }
