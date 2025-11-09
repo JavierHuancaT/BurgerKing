@@ -1,129 +1,100 @@
 /*
- * :host (El anfitrión)
- * Lo usamos para crear un fondo dinámico para TODA la página.
+ * :host y .login-page-container
+ * Centran el formulario en el espacio que deja el <router-outlet>
  */
 :host {
-  /* Hacemos que ocupe toda la pantalla y centramos el contenido */
+  display: block;
+  /* (Asumiendo que el CSS global da un fondo, 
+     sino, añade 'background-color: #f9f9f9;' aquí) */
+}
+
+.login-page-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  align-items: center;
+  padding: 4rem 1rem; /* Espacio para que no se pegue al header/footer */
+}
+
+/*
+ * La tarjeta de login, como en el mockup
+ */
+.login-card {
   width: 100%;
-
-  /* --- PALETA DE COLORES (Tema "Fuego" Moderno) --- */
-  --theme-red: #D4202A;
-  --theme-yellow: #FDB824;
-  --theme-brown: #3D251E;
-
-  /*
-   * FONDO AVANZADO:
-   * Un gradiente diagonal y vibrante que usa los colores de la marca.
-   * Esto será lo que el "vidrio" va a desenfocar.
-   */
-  background: linear-gradient(135deg, var(--theme-brown) 0%, var(--theme-red) 50%, var(--theme-yellow) 100%);
-  
-  /* Asegura una fuente moderna (la que tenga el navegador por defecto) */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  max-width: 450px;
+  padding: 2rem;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/*
- * LA TARJETA DE VIDRIO (GLASSMORPHISM)
- * Anulamos el .card de Bootstrap para crear el efecto.
- */
-.card {
-  /* 1. El color de fondo: blanco muy transparente */
-  background: rgba(255, 255, 255, 0.15);
-
-  /* 2. (LA MAGIA) El filtro de desenfoque */
-  /* Esto "esmerila" todo lo que está detrás */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px); /* (Soporte para Safari) */
-
-  /* 3. El borde: un filo sutil para que "atrape la luz" */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px; /* Bordes más redondeados */
-
-  /* 4. La sombra: suave para dar profundidad */
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-
-  /* Hacemos que el texto dentro de la tarjeta sea blanco */
-  color: #ffffff;
+.login-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
-/*
- * TEXTOS DENTRO DE LA TARJETA
- */
-.card-title {
-  color: #ffffff;
-  font-weight: 600; /* Un poco más grueso */
-  font-size: 2rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra de texto para legibilidad */
+/* Estilos de Formulario */
+.form-group {
+  margin-bottom: 1rem;
 }
 
-.form-label {
-  color: rgba(255, 255, 255, 0.8); /* Blanco semi-transparente */
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
 }
 
-/*
- * INPUTS MODERNOS (Estilo "Glass")
- */
 .form-control {
-  background: rgba(255, 255, 255, 0.1); /* Transparente */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  color: #ffffff; /* El usuario escribirá en blanco */
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-/* Hacemos que el texto de placeholder sea legible */
-.form-control::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+/* Contenedor de botones (como en el mockup) */
+.form-buttons {
+  display: flex;
+  justify-content: space-between; /* Botones separados */
+  gap: 1rem; /* Espacio entre botones */
+  margin-top: 1.5rem;
 }
 
-/* Hacemos que el "foco" (al hacer clic) use el amarillo de la marca */
-.form-control:focus {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border-color: var(--theme-yellow);
-  box-shadow: 0 0 0 0.25rem rgba(253, 184, 36, 0.5);
-}
-
-/*
- * BOTÓN AVANZADO (Micro-interacción)
- */
-.btn-primary {
-  /* Usamos el amarillo como color de acción principal */
-  background: var(--theme-yellow);
+.btn-primary, .btn-secondary {
+  flex: 1; /* Ambos botones ocupan el mismo espacio */
+  padding: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
   border: none;
-  /* El texto del botón será marrón oscuro para contraste */
-  color: var(--theme-brown);
-  
-  font-weight: 700; /* Texto en negrita */
-  font-size: 1.1rem;
-  padding: 10px;
-  border-radius: 8px;
-  
-  /* Animación suave para el hover */
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
-/*
- * La micro-interacción:
- * El botón "crece" y lanza una "sombra de resplandor"
- */
-.btn-primary:hover, .btn-primary:focus {
-  transform: scale(1.05); /* Crece un 5% */
-  /* Sombra de resplandor amarilla */
-  box-shadow: 0 6px 20px rgba(253, 184, 36, 0.4);
+.btn-primary {
+  background-color: #007bff; /* (Puedes cambiar esto al rojo BK) */
+  color: white;
 }
 
-/*
- * ALERTA DE ERROR (Estilo "Glass")
- */
-.alert-danger {
-  /* Fondo rojo "de vidrio" */
-  background: rgba(212, 32, 42, 0.3);
-  border: 1px solid rgba(212, 32, 42, 0.8);
-  color: #ffffff;
-  border-radius: 8px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+/* Vínculo de Registro (como en el mockup) */
+.register-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.register-link a {
+  color: #007bff; /* (Puedes cambiar esto al rojo BK) */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
 }

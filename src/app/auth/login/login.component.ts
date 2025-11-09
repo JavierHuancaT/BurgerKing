@@ -60,4 +60,11 @@ export class LoginComponent {
       }
     });
   }
+  /**
+   * Se llama cuando el usuario presiona el botón "Cancelar".
+   * Navega de vuelta a la página principal (Catálogo).
+   */
+  onCancel(): void {
+    this.router.navigate(['/']);
+  }
 }
