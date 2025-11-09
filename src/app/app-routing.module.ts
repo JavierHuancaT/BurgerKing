@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
 
 /**
  * Rutas principales de la aplicación (AppRoutingModule).
@@ -7,6 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
  */
 const routes: Routes = [
   // ... (otras rutas, ej: catálogo en '/')
+  {
+    path: '', // La ruta raíz (http://localhost:4200/)
+    component: PaginaPrincipalComponent
+  },
+
+  // (Opcional) Si también quieres que funcione con /pagina-principal
+  {
+    path: 'pagina-principal',
+    component: PaginaPrincipalComponent
+  },
 
   /**
    * (Lazy Loading)
