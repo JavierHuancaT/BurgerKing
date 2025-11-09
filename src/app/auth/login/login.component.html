@@ -1,0 +1,44 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center">Iniciar Sesión</h3>
+          
+          <form (ngSubmit)="onSubmit()">
+            
+            <div *ngIf="loginError" class="alert alert-danger">
+              Email o contraseña incorrectos.
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email"
+                [(ngModel)]="email"
+                name="email"
+                required>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password"
+                [(ngModel)]="password"
+                name="password"
+                required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              Ingresar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
