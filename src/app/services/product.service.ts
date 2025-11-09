@@ -6,13 +6,21 @@ export interface Product {
   name: string;
   basePrice: number;
   stock: number;
+  imageData?: string;
 }
+
+const LS_KEY = 'bk_products';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly LS_KEY = 'bk_products';
   private _items$ = new BehaviorSubject<Product[]>(this.read());
-  items$ = this._items$.asObservable();
+  public  items$ = this._items$.asObservable();
+
+  private read(): Product[] {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+    catch { return []; }
+  }
+  private write(items: Product[]) { localStorage.setItem(LS_KEY, JSON.stringify(items)); }
 
   add(p: Omit<Product, 'id'>) {
     const items = [...this._items$.value];
@@ -22,15 +30,19 @@ export class ProductService {
     this._items$.next(items);
   }
 
-  private read(): Product[] {
-    const raw = localStorage.getItem(this.LS_KEY);
-    if (raw) return JSON.parse(raw) as Product[];
-    const seed: Product[] = [
-      { id: '1', name: 'Whopper', basePrice: 4290, stock: 15 },
-      { id: '2', name: 'King de Pollo', basePrice: 3590, stock: 20 },
-    ];
-    this.write(seed);
-    return seed;
+  findById(id: string): Product | undefined {
+    return this._items$.value.find(p => p.id === id);
   }
-  private write(list: Product[]) { localStorage.setItem(this.LS_KEY, JSON.stringify(list)); }
+
+  update(id: string, changes: Partial<Omit<Product,'id'>>) {
+    const items = this._items$.value.map(p => p.id === id ? { ...p, ...changes } : p);
+    this.write(items);
+    this._items$.next(items);
+  }
+
+  remove(id: string) {
+    const items = this._items$.value.filter(p => p.id !== id);
+    this.write(items);
+    this._items$.next(items);
+  }
 }

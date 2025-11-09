@@ -1,12 +1,14 @@
-<div class="d-flex align-items-center justify-content-between mb-3">
-  <h5 class="m-0" style="color:var(--bk-brown)">Nuevo producto</h5>
-  <a class="btn btn-bk-ghost" routerLink="../products">Volver a la lista</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="m-0" style="color:var(--bk-brown)">
+    {{ editId ? 'Editar producto' : 'Nuevo producto' }}
+  </h5>
+  <a routerLink="../products">Volver a la lista</a>
 </div>
 
 <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
   <div class="col-md-6">
     <label class="form-label">Nombre</label>
-    <input class="form-control" formControlName="name" placeholder="Ej: Whopper"/>
+    <input type="text" class="form-control" formControlName="name" placeholder="Ej: Hamburguesa"/>
     <div class="text-danger small" *ngIf="form.controls.name.touched && form.controls.name.invalid">
       Nombre requerido (máx 80).
     </div>
@@ -23,7 +25,9 @@
   </div>
 
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-bk-primary" type="submit">Guardar producto</button>
+    <button class="btn btn-bk-primary" type="submit">
+      {{ editId ? 'Guardar cambios' : 'Guardar producto' }}
+    </button>
     <a class="btn btn-bk-ghost" routerLink="../products">Cancelar</a>
   </div>
 </form>

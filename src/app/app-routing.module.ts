@@ -13,7 +13,8 @@ const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'products' },
       { path: 'products', component: ProductListComponent },    // HDU5
-      { path: 'products/new', component: ProductFormComponent } // HDU4
+      { path: 'products/new', component: ProductFormComponent }, // HDU4
+      { path: 'products/:id/edit', component: ProductFormComponent }, // HDU7
     ]
   },
   { path: '**', redirectTo: 'admin/products' }
