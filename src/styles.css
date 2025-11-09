@@ -1,1 +1,143 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===== Paleta BK (global) ===== */
+:root{
+  --bk-brown: #502314;
+  --bk-red:   #E31837;
+  --bk-yellow:#FFC72C;
+  --bk-cream: #FFF4E0;
+  --bk-ink:   #1c1c1c;
+
+  --bk-radius: 16px;
+
+  /* Layout medidas */
+  --topbar-h: 64px;
+  --sidebar-w: 260px;
+}
+
+html, body { height: 100%; }
+body{
+  background: var(--bk-cream);
+  color: var(--bk-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans";
+}
+
+/* ===== Topbar ===== */
+.navbar-bk{
+  height: var(--topbar-h);
+  background: var(--bk-brown);
+  border-bottom: 4px solid var(--bk-yellow);
+}
+.navbar-brand{
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+.navbar-brand img {
+  height: 28px;
+  width: auto;
+  margin-right: .5rem;
+}
+
+/* ===== Sidebar ===== */
+.admin-shell {
+  min-height: calc(100vh - var(--topbar-h));
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+}
+
+.admin-sidebar{
+  background: #fff;
+  border-right: 1px solid #00000010;
+  padding: 1rem;
+}
+.admin-sidebar .section-title{
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #9b7d70;
+  text-transform: uppercase;
+  margin: .25rem 0 .75rem;
+}
+.admin-sidebar .list-group-item{
+  border: 0;
+  border-radius: 10px;
+  padding: .6rem .75rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--bk-brown);
+}
+.admin-sidebar .list-group-item.active{
+  background: rgba(227,24,55,.10);
+  color: var(--bk-red);
+  font-weight: 700;
+}
+
+/* Responsivo: sidebar oculto bajo md, se muestra con botón */
+@media (max-width: 991.98px){
+  .admin-shell {
+    grid-template-columns: 1fr; /* sidebar desaparece del grid */
+  }
+  .admin-sidebar {
+    position: fixed;
+    top: var(--topbar-h);
+    left: 0;
+    height: calc(100vh - var(--topbar-h));
+    width: min(90vw, var(--sidebar-w));
+    transform: translateX(-105%);
+    transition: transform .2s ease;
+    z-index: 1031;
+    box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  }
+  .admin-sidebar.open { transform: translateX(0%); }
+  .admin-overlay {
+    position: fixed; inset: 0;
+    top: var(--topbar-h);
+    background: rgba(0,0,0,.25);
+    z-index: 1030;
+  }
+}
+
+/* ===== Content ===== */
+.admin-content{
+  padding: 1.25rem;
+}
+
+/* ===== Cards, Botones, Formularios ===== */
+.card{
+  border: 0;
+  border-radius: var(--bk-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+.btn-bk{
+  padding: .55rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.btn-bk-primary{
+  background: var(--bk-red);
+  border: 1px solid #b0132a;   /* borde visible y un pelín más oscuro */
+  color: #fff;
+}
+.btn-bk-primary:hover{
+  background:#c7152f; border-color:#a31127; color:#fff;
+}
+.btn-bk-ghost{
+  background: transparent;
+  color: var(--bk-brown);
+  border: 1px solid var(--bk-brown);
+}
+.btn-bk-ghost:hover{ background: var(--bk-brown); color: #fff; }
+
+.form-label{ font-weight: 600; color: var(--bk-brown); }
+.form-control{
+  border-radius: 12px;
+  border: 1px solid #00000022;
+}
+.form-control:focus{
+  border-color: var(--bk-red);
+  box-shadow: 0 0 0 .25rem rgba(227,24,55,.15);
+}
+.table thead th{
+  border-bottom: 2px solid #00000010;
+  color: var(--bk-brown);
+}
+.table>tbody>tr>td{ vertical-align: middle; }

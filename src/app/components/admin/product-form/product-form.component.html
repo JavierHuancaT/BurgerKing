@@ -1,0 +1,29 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h5 class="m-0" style="color:var(--bk-brown)">Nuevo producto</h5>
+  <a class="btn btn-bk-ghost" routerLink="../products">Volver a la lista</a>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
+  <div class="col-md-6">
+    <label class="form-label">Nombre</label>
+    <input class="form-control" formControlName="name" placeholder="Ej: Whopper"/>
+    <div class="text-danger small" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+      Nombre requerido (máx 80).
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Precio base</label>
+    <input type="number" class="form-control" formControlName="basePrice" min="0" placeholder="0"/>
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Stock</label>
+    <input type="number" class="form-control" formControlName="stock" min="0" placeholder="0"/>
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-bk-primary" type="submit">Guardar producto</button>
+    <a class="btn btn-bk-ghost" routerLink="../products">Cancelar</a>
+  </div>
+</form>
