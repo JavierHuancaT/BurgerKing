@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { User, UserRole } from '../shared/models/user.model';
-
+import { User, UserRole } from '../models/user';
 /**
  * Tipo interno que simula la tabla completa de la BD,
  * incluyendo el password solo para este servicio.
