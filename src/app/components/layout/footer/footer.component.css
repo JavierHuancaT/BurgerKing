@@ -1,0 +1,45 @@
+/*
+ * Sección de Redes Sociales
+ */
+.social-section {
+  padding: 2rem 1rem;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.social-section h5 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* Espacio entre iconos */
+}
+
+.social-img {
+  max-width: 40px; /* <-- LA SOLUCIÓN: Limita el tamaño de los iconos */
+  height: auto;
+  transition: transform 0.2s;
+}
+
+.social-img:hover {
+  transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
+}
+
+/*
+ * Footer Final
+ */
+.footer-custom {
+  padding: 1rem;
+  text-align: center;
+  background-color: #3D251E; /* Marrón oscuro (BK) */
+  color: #f5f5f5; /* Texto claro */
+}
+
+.footer-custom p {
+  margin: 0;
+  font-size: 0.9rem;
+}
