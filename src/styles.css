@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+/* Este codigo permite que cada pagina tenga el fondo de color piel claro */
+body {
+  background-color: #fff3e0; 
+}
