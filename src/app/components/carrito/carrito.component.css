@@ -1,0 +1,75 @@
+body {
+  background-color: #fdf2e9;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: #d32f2f;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 2.5em;
+}
+
+.carrito-container {
+  width: 80%;
+  margin: 40px auto;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+th {
+  background-color: #ffc107;
+  color: #333;
+  padding: 12px;
+  font-size: 1.1em;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+button {
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #b71c1c;
+}
+
+/* Sección del total */
+.total-container {
+  text-align: right;
+  margin-top: 20px;
+  font-size: 1.3em;
+  color: #333;
+}
+
+.acciones {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-vaciar {
+  background-color: #757575;
+}
+
+.btn-vaciar:hover {
+  background-color: #616161;
+}
