@@ -1,12 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { NgForm } from '@angular/forms'; // <-- 1. IMPORTA NgForm
 
-/**
- * Componente de Login (HDU2).
- * Gestiona el formulario de inicio de sesión y se comunica
- * con el AuthService para validar al usuario.
- */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,56 +10,45 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent {
 
-  // --- Propiedades del Componente ---
-
-  /** Propiedad vinculada al input de Email (con [(ngModel)]) */
   email = '';
-  /** Propiedad vinculada al input de Password (con [(ngModel)]) */
   password = '';
-  
-  /**
-   * Flag para mostrar/ocultar el mensaje de error en el HTML.
-   * (Criterio HDU2: "mensaje de error").
-   */
   loginError = false;
 
-  /**
-   * Inyecta los servicios necesarios (Inyección de Dependencias).
-   * @param authService El servicio que maneja la lógica de login.
-   * @param router El servicio de Angular para la navegación.
-   */
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
   /**
-   * Método que se ejecuta al enviar el formulario (ngSubmit).
    * (Criterio HDU2: "presionará el botón 'Ingresar'").
+   * Ahora recibe el formulario (form) desde el HTML.
    */
-  onSubmit(): void {
-    this.loginError = false; // Reinicia el error en cada intento
+  onSubmit(form: NgForm): void { // <-- 2. AÑADE (form: NgForm)
+    
+    // 3. AÑADE ESTA VALIDACIÓN
+    // Si el usuario hizo clic pero el formulario es inválido,
+    // simplemente detenemos la función.
+    // El HTML se encargará de mostrar los errores (porque 'submitted' es true).
+    if (form.invalid) {
+      return;
+    }
+    
+    this.loginError = false;
 
-    // Llama al servicio (el componente no sabe CÓMO se valida)
+    // Esta parte solo se ejecuta si el formulario es VÁLIDO
     this.authService.login(this.email, this.password).subscribe(user => {
-      
       if (user) {
-        // ÉXITO: Redirige según el rol (Habilita HDU3)
         if (user.role === 'Admin') {
-          this.router.navigate(['/admin']); // Ruta del Admin
+          this.router.navigate(['/admin']);
         } else {
-          this.router.navigate(['/']); // Ruta del Cliente (Catálogo)
+          this.router.navigate(['/']);
         }
       } else {
-        // FALLO: Activa el mensaje de error en la vista
         this.loginError = true;
       }
     });
   }
-  /**
-   * Se llama cuando el usuario presiona el botón "Cancelar".
-   * Navega de vuelta a la página principal (Catálogo).
-   */
+
   onCancel(): void {
     this.router.navigate(['/']);
   }
