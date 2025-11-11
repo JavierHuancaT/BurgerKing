@@ -8,6 +8,7 @@ import { ProductFormComponent } from './components/admin/product-form/product-fo
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
+import { CarritoComponent } from './components/carrito/carrito.component';
 import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
 
@@ -15,9 +16,13 @@ import { FooterComponent } from './components/layout/footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
+<<<<<<< HEAD
     ProductListComponent,
     ProductFormComponent,
     AdminDashboardComponent,
+=======
+    CarritoComponent,
+>>>>>>> cliente-carrito
     PaginaPrincipalComponent,
     HeaderComponent,
     FooterComponent

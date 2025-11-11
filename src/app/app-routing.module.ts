@@ -1,10 +1,26 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
+import { CarritoComponent } from './components/carrito/carrito.component';
 
+<<<<<<< HEAD
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { ProductListComponent } from './components/admin/product-list/product-list.component';
 import { ProductFormComponent } from './components/admin/product-form/product-form.component';
+=======
+/**
+ * Rutas principales de la aplicación (AppRoutingModule).
+ * Este es el "mapa principal" que usa "Lazy Loading".
+ */
+const routes: Routes = [
+  { path: '', component: PaginaPrincipalComponent },
+  { path: 'carrito', component: CarritoComponent },
+  // ... (otras rutas, ej: catálogo en '/')
+  {
+    path: '', // La ruta raíz (http://localhost:4200/)
+    component: PaginaPrincipalComponent
+  },
+>>>>>>> cliente-carrito
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
