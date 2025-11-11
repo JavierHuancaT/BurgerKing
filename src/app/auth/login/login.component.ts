@@ -41,7 +41,7 @@ export class LoginComponent {
         if (user.role === 'Admin') {
           this.router.navigate(['/admin']);
         } else {
-          this.router.navigate(['/']);
+          this.router.navigate(['/admin/productos']);
         }
       } else {
         this.loginError = true;
