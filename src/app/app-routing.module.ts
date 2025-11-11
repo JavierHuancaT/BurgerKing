@@ -7,11 +7,19 @@ import { ProductListComponent } from './components/admin/product-list/product-li
 import { ProductFormComponent } from './components/admin/product-form/product-form.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'admin/products' },
+  { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
+  {
+    path: 'pagina-principal',
+    component: PaginaPrincipalComponent
+  },
+    {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+  },
   {
     path: 'admin',
     component: AdminDashboardComponent,
-    children: [
+    children: [ 
       { path: '', pathMatch: 'full', redirectTo: 'products' },
       { path: 'products', component: ProductListComponent },    // HDU5
       { path: 'products/new', component: ProductFormComponent }, // HDU4
