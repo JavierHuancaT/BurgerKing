@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
 
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { ProductListComponent } from './components/admin/product-list/product-list.component';
@@ -21,7 +22,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes)], // 'forRoot' para el módulo raíz
   exports: [RouterModule]
 })
 export class AppRoutingModule {}

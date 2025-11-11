@@ -1,0 +1,19 @@
+<!-- Titulo de combos -->
+<section class="combos-header">
+  <h2>Combos</h2>
+</section>
+
+<!-- Grid de productos (combos) -->
+<div class="combos-container">
+  <div class="combos-grid">
+    <div class="combo-wrapper" *ngFor="let combo of combos">
+      <div class="combo-card">
+        <img [src]="combo.imagen" [alt]="combo.nombre" alt="Logo de combo nombre" class="combo-img">
+        <h5>{{ combo.nombre }}</h5>
+        <p class="combo-description">{{ combo.descripcion }}</p>
+        <p class="combo-price">{{ combo.precio }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+

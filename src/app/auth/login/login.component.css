@@ -1,0 +1,124 @@
+/*
+ * :host y .login-page-container
+ * Centran el formulario en el espacio que deja el <router-outlet>
+ */
+:host {
+  display: block;
+}
+
+.login-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
+/*
+ * La tarjeta de login, como en el mockup
+ */
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 2rem;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Estilos de Formulario */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Contenedor de botones (como en el mockup) */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-primary, .btn-secondary {
+  flex: 1;
+  padding: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  border: none;
+}
+
+/*
+ * =========================================
+ * ESTILOS DE TEMA Y VALIDACIÓN DINÁMICA
+ * =========================================
+ */
+
+.btn-primary {
+  background-color: #D4202A; /* Rojo BK */
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.register-link a {
+  color: #D4202A; /* Rojo BK */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+/*
+ * 1. Estiliza el borde del input cuando es inválido
+ */
+.form-control.is-invalid {
+  border-color: #D4202A;
+  box-shadow: 0 0 0 0.25rem rgba(212, 32, 42, 0.2);
+}
+
+/*
+ * 2. Muestra el mensaje de error
+ */
+.invalid-feedback {
+  display: block; 
+  color: #D4202A;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/*
+ * 3. Estilo para el botón cuando está deshabilitado
+ */
+.btn-primary:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
