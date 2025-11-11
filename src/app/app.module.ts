@@ -16,13 +16,10 @@ import { FooterComponent } from './components/layout/footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
-<<<<<<< HEAD
     ProductListComponent,
     ProductFormComponent,
     AdminDashboardComponent,
-=======
     CarritoComponent,
->>>>>>> cliente-carrito
     PaginaPrincipalComponent,
     HeaderComponent,
     FooterComponent
