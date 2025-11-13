@@ -16,14 +16,30 @@
         <span class="text-warning fw-bold">Panel</span>
       </li>
       <!-- Usuario / Cerrar sesión (hook para futuro login) -->
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
-          <i class="bi bi-person-circle fs-5 me-1"></i> admin
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Configuración</a></li>
+      <li class="nav-item dropdown" *ngIf="(currentUser$ | async) as user">
+        <button
+          class="nav-link dropdown-toggle d-flex align-items-center btn btn-link m-0 p-0"
+          id="adminDropdown"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-person-circle fs-5 me-1"></i>
+          {{ user.name }} <span *ngIf="user.role === 'Admin'">(Admin)</span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+          <li>
+            <button class="dropdown-item" type="button">
+              <i class="bi bi-gear me-2"></i>Configuración
+            </button>
+          </li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+          <li>
+            <button class="dropdown-item text-danger" type="button" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+            </button>
+          </li>
         </ul>
       </li>
     </ul>
