@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
+import { RegisterUserComponent } from './components/register-user/register-user.component';
 
 /**
  * Rutas principales de la aplicación (AppRoutingModule).
@@ -17,6 +18,12 @@ const routes: Routes = [
   {
     path: 'pagina-principal',
     component: PaginaPrincipalComponent
+  },
+  
+  // --- NUEVA RUTA PARA EL REGISTRO ---
+  {
+    path: 'registro', // Cuando la URL sea /registro...
+    component: RegisterUserComponent // ...mostrará el componente de registro.
   },
 
   /**

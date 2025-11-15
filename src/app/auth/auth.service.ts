@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { User, UserRole } from '../models/user';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { User } from '../models/user';
 /**
  * Tipo interno que simula la tabla completa de la BD,
  * incluyendo el password solo para este servicio.
@@ -93,5 +93,35 @@ export class AuthService {
   logout(): void {
     // Emite 'null' para notificar a la app que el usuario cerró sesión.
     this.currentUserSubject.next(null);
+  }
+
+  /**
+   * Registra un nuevo usuario en la BD simulada.
+   * (Cumple criterios de HDU1).
+   * @param name El nombre del nuevo usuario.
+   * @param email El email del nuevo usuario.
+   * @param password El password del nuevo usuario.
+   * @returns Un Observable<User> con el usuario creado, o un error si el email ya existe.
+   */
+  register(name: string, email: string, password: string): Observable<User> {
+    // 1. Verificar si el email ya está en uso.
+    const userExists = this.userDatabase.find(user => user.email === email);
+    if (userExists) {
+      // Retorna un observable que emite un error.
+      return throwError(() => new Error('El email ya está registrado.'));
+    }
+
+    // 2. Crear el nuevo usuario.
+    const newUser: UserWithPassword = {
+      id: new Date().getTime().toString() + Math.random(), // ID único simple
+      name,
+      email,
+      passwordHash: password, // En un caso real, aquí se haría el hash.
+      role: 'Client' // Por defecto, todos los registros son de clientes.
+    };
+
+    // 3. Guardar en la "base de datos".
+    this.userDatabase.push(newUser);
+    return of(newUser); // Retorna el nuevo usuario en un observable.
   }
 }

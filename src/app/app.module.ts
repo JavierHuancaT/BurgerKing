@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
 import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
+import { RegisterUserComponent } from './components/register-user/register-user.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -13,12 +15,15 @@ import { FooterComponent } from './components/layout/footer/footer.component';
     AppComponent,
     PaginaPrincipalComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    RegisterUserComponent
   
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
