@@ -1,0 +1,46 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h5 class="m-0" style="color:var(--bk-brown)">Productos</h5>
+  <a class="btn btn-bk-primary" routerLink="../products/new">
+    <i class="bi bi-plus-circle me-1"></i> Añadir
+  </a>
+</div>
+
+<ng-container *ngIf="(items$ | async) as items; else empty">
+  <div class="table-responsive">
+    <table class="table table-hover bg-white rounded-3 overflow-hidden">
+      <thead class="bg-light">
+        <tr>
+          <th style="width:64px"></th>
+          <th>Nombre</th>
+          <th class="text-end">Precio</th>
+          <th class="text-end">Stock</th>
+          <th class="text-end" style="width:160px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of items">
+          <td>
+            <img *ngIf="p.imageData" [src]="p.imageData" class="rounded" style="width:40px;height:40px;object-fit:cover;">
+          </td>
+          <td class="fw-semibold">{{ p.name }}</td>
+          <td class="text-end">${{ p.basePrice | number:'1.0-0' }}</td>
+          <td class="text-end">{{ p.stock }}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-secondary me-2" [routerLink]="['../products', p.id, 'edit']">
+              <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <button class="btn btn-sm btn-outline-danger" (click)="onDelete(p.id, p.name)">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+
+<ng-template #empty>
+  <div class="alert alert-light border">
+    No hay productos. Crea el primero desde <a routerLink="../products/new">“Añadir producto”</a>.
+  </div>
+</ng-template>

@@ -3,20 +3,65 @@
 
   <!-- Navegacion principal -->
   <nav class="nav-links">
-    <a class="nav-item" routerLink="catalogo">Catálogo</a>
-    <a class="nav-item" routerLink="restaurantes">Restaurantes</a>
-    <a class="nav-item" routerLink="promociones">Promociones</a>
+    <a class="nav-item" routerLink="/catalogo">Catálogo</a>
+    <a class="nav-item" routerLink="/restaurantes">Restaurantes</a>
+    <a class="nav-item" routerLink="/promociones">Promociones</a>
   </nav>
 
   <!-- Logo -->
   <div class="logo-container">
-    <img src="assets/logo.png" alt="Logo de BurgerKing" class="logo-img">
+    <a routerLink="/pagina-principal">
+      <img src="assets/logo.png" alt="Logo de Burger King" class="logo-img">
+    </a>
   </div>
 
   <!-- Acciones del usuario -->
   <div class="user-actions">
+<<<<<<< HEAD
     <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img">
     <button class="btn-register" routerLink="/registro">Registrarse</button>
     <button class="btn-login" routerLink="auth/login">Iniciar sesión</button>
+=======
+
+    <!-- Caso 1: HAY usuario logueado -->
+    <ng-container *ngIf="(currentUser$ | async) as user; else notLogged">
+      <!-- Si es ADMIN: no mostramos nada en este header -->
+      <ng-container *ngIf="user.role === 'Admin'; else clientArea">
+        <button class="btn-logout" (click)="logout()">
+          Cerrar sesión
+        </button>
+
+        <button class="btn-admin" routerLink="/admin/products">
+          Menu Admin
+        </button>
+      </ng-container>
+
+      <!-- Si es CLIENTE: comportamiento normal de tienda -->
+      <ng-template #clientArea>
+        <a routerLink="/carrito">
+          <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img">
+        </a>
+
+        <span class="user-name">
+          Hola, {{ user.name }}
+        </span>
+
+        <button class="btn-logout" (click)="logout()">
+          Cerrar sesión
+        </button>
+
+      </ng-template>
+    </ng-container>
+
+    <!-- Caso 2: NO hay usuario logueado -->
+    <ng-template #notLogged>
+      <a routerLink="/carrito">
+        <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img">
+      </a>
+      <button class="btn-register" routerLink="/auth/register">Registrarse</button>
+      <button class="btn-login" routerLink="/auth/login">Iniciar sesión</button>
+    </ng-template>
+
+>>>>>>> origin/main
   </div>
 </header>

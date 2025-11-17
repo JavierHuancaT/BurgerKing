@@ -1,27 +1,102 @@
-# Burgerking
+# Burger King – Catálogo y Panel Administrador (Angular 15)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+Proyecto web desarrollado en **Angular 15** que simula una tienda tipo Burger King con:
 
-## Development server
+- **Sitio público** para que los clientes naveguen por el catálogo y gestionen su carrito.
+- **Sistema de autenticación** con roles (`Admin` y `Client`).
+- **Panel de administración** para gestionar productos del local (crear, listar y editar).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Es un proyecto académico enfocado en **buenas prácticas de front-end**, **enrutamiento**, **guards de Angular** y **simulación de una capa de datos**.
 
-## Code scaffolding
+---
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 🚀 Funcionalidades principales
 
-## Build
+### Sitio público (Cliente)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- Página principal con catálogo (`/pagina-principal`).
+- Carrito de compras (`/carrito`):
+  - Agregar productos.
+  - Ver resumen de compra.
+- Header con navegación principal (catálogo, restaurantes, promociones).
 
-## Running unit tests
+### Autenticación y roles
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- **Login** de usuarios con credenciales predefinidas (BD simulada en memoria).
+- Manejo de sesión con `BehaviorSubject` (`AuthService`).
+- Roles soportados:
+  - `Admin`
+  - `Client`
 
-## Running end-to-end tests
+### Panel de administración (`/admin`)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- Dashboard de administrador.
+- Gestión de productos:
+  - **Listado de productos** (`/admin/products`).
+  - **Crear producto** (`/admin/products/new`).
+  - **Editar producto** (`/admin/products/:id/edit`).
 
-## Further help
+### Protección de rutas (HDU03)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Se implementa la historia de usuario **HDU03 – Proteger rutas de Administrador**:
+
+- Si un **visitante** intenta ir a `/admin` → se redirige a `auth/login`.
+- Si un **usuario con rol Client** intenta ir a `/admin` → se redirige a `pagina-principal`.
+- Solo un **usuario con rol Admin** puede acceder a `/admin` y a sus rutas hijas.
+- El **cierre de sesión del administrador** se realiza desde el menú desplegable del navbar del panel admin.
+
+---
+
+## 🧱 Stack tecnológico
+
+- **Framework:** Angular 15 (Angular CLI)
+- **Lenguajes:** TypeScript, HTML, CSS
+- **Estilos:** Bootstrap 5 + estilos personalizados
+- **Gestión de estado de sesión:** `BehaviorSubject` (RxJS)
+- **Enrutamiento:** `RouterModule` (módulo raíz + lazy loading de `AuthModule`)
+
+---
+
+## 📂 Estructura principal del proyecto
+
+Ruta base: `src/app/`
+
+```txt
+app/
+│   app.module.ts
+│   app-routing.module.ts
+│   app.component.*
+│
+├── auth/
+│   │   auth.module.ts
+│   │   auth-routing.module.ts
+│   │   auth.service.ts
+│   └── login/
+│       └── login.component.*
+│
+├── components/
+│   ├── layout/
+│   │   ├── header/
+│   │   └── footer/
+│   ├── pagina-principal/
+│   ├── carrito/
+│   └── admin/
+│       ├── admin-dashboard/
+│       ├── product-list/
+│       └── product-form/
+│
+├── guards/
+│   ├── admin.guard.ts
+│   ├── cliente.guard.ts
+│   └── login.guard.ts
+│
+├── models/
+│   ├── user.model.ts
+│   ├── product.model.ts
+│   └── item-carrito.ts
+│
+└── services/
+    ├── login.service.ts
+    ├── product.service.ts
+    └── carrito/
+        └── carrito.service.ts

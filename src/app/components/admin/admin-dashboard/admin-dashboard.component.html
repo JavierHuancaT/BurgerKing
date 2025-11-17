@@ -1,0 +1,89 @@
+<!-- TOPBAR -->
+<nav class="navbar navbar-expand navbar-dark navbar-bk">
+  <div class="container-fluid px-3">
+    <button class="btn btn-light d-lg-none me-2" (click)="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <a class="navbar-brand d-flex align-items-center" routerLink="/admin">
+      <img src="/assets/burgerLogo.png" alt="BK">
+      Burger King · Admin
+    </a>
+
+    <ul class="navbar-nav ms-auto align-items-center">
+      <!-- Placeholder de búsqueda o acciones -->
+      <li class="nav-item me-2 d-none d-md-block">
+        <span class="text-warning fw-bold">Panel</span>
+      </li>
+      <!-- Usuario / Cerrar sesión (hook para futuro login) -->
+      <li class="nav-item dropdown" *ngIf="(currentUser$ | async) as user">
+        <button
+          class="nav-link dropdown-toggle d-flex align-items-center btn btn-link m-0 p-0"
+          id="adminDropdown"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-person-circle fs-5 me-1"></i>
+          {{ user.name }} <span *ngIf="user.role === 'Admin'">(Admin)</span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+          <li>
+            <button class="dropdown-item" type="button">
+              <i class="bi bi-gear me-2"></i>Configuración
+            </button>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <button class="dropdown-item text-danger" type="button" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+            </button>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- OVERLAY móvil (clic para cerrar) -->
+<div class="admin-overlay d-lg-none" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+
+<!-- SHELL -->
+<div class="admin-shell">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" [class.open]="sidebarOpen">
+    <div class="section-title">Navegación</div>
+    <div class="list-group">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+         class="list-group-item">
+        <i class="bi bi-grid-fill"></i> Dashboard
+      </a>
+        <a routerLink="products"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="list-group-item">
+        <i class="bi bi-basket3"></i> Lista de productos
+        </a>
+
+        <a routerLink="products/new"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="list-group-item">
+        <i class="bi bi-plus-circle"></i> Añadir producto
+        </a>
+    </div>
+
+    <div class="section-title mt-4">Atajos</div>
+    <div class="d-grid gap-2">
+      <a class="btn btn-bk-primary">Publicar cambios</a>
+      <a class="btn btn-bk-ghost">Ver tienda</a>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="admin-content">
+    <!-- Puedes dejar un resumen aquí más adelante -->
+    <router-outlet></router-outlet>
+  </main>
+</div>

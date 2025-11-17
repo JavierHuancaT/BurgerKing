@@ -1,19 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
+<<<<<<< HEAD
 import { RegisterUserComponent } from './components/register-user/register-user.component';
+=======
+import { CarritoComponent } from './components/carrito/carrito.component';
 
-/**
- * Rutas principales de la aplicación (AppRoutingModule).
- * Este es el "mapa principal" que usa "Lazy Loading".
- */
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { ProductListComponent } from './components/admin/product-list/product-list.component';
+import { ProductFormComponent } from './components/admin/product-form/product-form.component';
+import { AdminGuard } from './guards/admin.guard';
+
+import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
+>>>>>>> origin/main
+
 const routes: Routes = [
-  // ... (otras rutas, ej: catálogo en '/')
-  {
-    path: '', // La ruta raíz (http://localhost:4200/)
-    component: PaginaPrincipalComponent
-  },
+  { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
 
+<<<<<<< HEAD
   // (Opcional) Si también quieres que funcione con /pagina-principal
   {
     path: 'pagina-principal',
@@ -25,22 +29,34 @@ const routes: Routes = [
     path: 'registro', // Cuando la URL sea /registro...
     component: RegisterUserComponent // ...mostrará el componente de registro.
   },
+=======
+  { path: 'pagina-principal', component: PaginaPrincipalComponent },
+  { path: 'carrito', component: CarritoComponent },
+  { path: 'personalizacion/:id', component: PersonalizacionComponent },
+>>>>>>> origin/main
 
-  /**
-   * (Lazy Loading)
-   * Cuando un usuario vaya a '/auth', Angular cargará
-   * el AuthModule dinámicamente.
-   */
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
-  }
+  },
 
-  // ... (otras rutas, ej: '/admin' para HDU3)
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
+    canActivate: [AdminGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'products' },
+      { path: 'products', component: ProductListComponent },
+      { path: 'products/new', component: ProductFormComponent },
+      { path: 'products/:id/edit', component: ProductFormComponent }
+    ]
+  },
+
+  { path: '**', redirectTo: 'pagina-principal' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)], // 'forRoot' para el módulo raíz
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

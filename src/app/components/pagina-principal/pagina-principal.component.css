@@ -200,3 +200,14 @@
 .nav-item:hover {
   color: #ff0000;
 }
+
+.cart-img {
+  width: 35px;
+  object-fit: contain;
+  cursor: pointer;           /* Hace que el cursor cambie al pasar por encima */
+  transition: transform 0.2s ease;
+}
+
+.cart-img:hover {
+  transform: scale(1.1);     /* Le da un pequeño efecto de aumento al pasar el mouse */
+}
