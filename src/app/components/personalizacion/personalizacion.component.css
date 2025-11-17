@@ -1,0 +1,56 @@
+.personalizacion-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.titulo {
+  text-align: center;
+  font-weight: bold;
+}
+
+.subtitulo {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.card-personalizacion {
+  display: flex;
+  gap: 2rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+.img-section img {
+  width: 260px;
+  height: auto;
+  object-fit: contain;
+}
+
+.opciones h3 {
+  margin-bottom: 1rem;
+}
+
+.opcion-item {
+  margin-bottom: 0.5rem;
+}
+
+.btn-confirmar {
+  margin-top: 2rem;
+  width: 100%;
+  background-color: #d62300;
+  padding: 0.8rem;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-confirmar:hover {
+  background-color: #a91900;
+}
