@@ -13,6 +13,7 @@ import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
 import { RegisterUserComponent } from './components/register-user/register-user.component';
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
+import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { PersonalizacionComponent } from './components/personalizacion/personali
     HeaderComponent,
     FooterComponent,
     RegisterUserComponent,
-    PersonalizacionComponent
+    PersonalizacionComponent,
+    RetiroComidaComponent
   ],
   imports: [
     BrowserModule,
