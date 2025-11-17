@@ -1,0 +1,58 @@
+<div class="personalizacion-container">
+
+  <!-- Título -->
+  <h2 class="titulo">Personalización del Producto</h2>
+
+  <!-- Subtítulo -->
+  <p class="subtitulo">
+    Ajusta tu hamburguesa según tu preferencia.  
+    Próximamente podrás personalizar ingredientes reales.
+  </p>
+
+  <!-- Tarjeta principal -->
+  <div class="card-personalizacion">
+
+    <!-- Imagen de ejemplo -->
+    <div class="img-section">
+      <img [src]="producto.imagen" alt="Imagen producto personalizable">
+    </div>
+
+    <!-- Sección de opciones -->
+    <div class="opciones">
+
+      <h3>Ingredientes</h3>
+
+      <div class="opcion-item">
+        <input type="checkbox" id="lechuga" checked>
+        <label for="lechuga">Lechuga</label>
+      </div>
+
+      <div class="opcion-item">
+        <input type="checkbox" id="tomate" checked>
+        <label for="tomate">Tomate</label>
+      </div>
+
+      <div class="opcion-item">
+        <input type="checkbox" id="cebolla">
+        <label for="cebolla">Cebolla</label>
+      </div>
+
+      <div class="opcion-item">
+        <input type="checkbox" id="pickles">
+        <label for="pickles">Picles</label>
+      </div>
+
+      <div class="opcion-item">
+        <input type="checkbox" id="queso" checked>
+        <label for="queso">Queso</label>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botón -->
+  <div class="acciones">
+    <button class="btn-confirmar">Confirmar Personalización</button>
+  </div>
+
+</div>

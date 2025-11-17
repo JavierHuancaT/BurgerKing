@@ -11,6 +11,7 @@ import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-p
 import { CarritoComponent } from './components/carrito/carrito.component';
 import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
+import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { FooterComponent } from './components/layout/footer/footer.component';
     CarritoComponent,
     PaginaPrincipalComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    PersonalizacionComponent
   ],
   imports: [
     BrowserModule,
