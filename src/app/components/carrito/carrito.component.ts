@@ -14,6 +14,8 @@ export class CarritoComponent implements OnInit {
   // Total general del carrito
   total: number = 0;
 
+  opcionRetiro: string | undefined;
+
   constructor(private carritoService: CarritoService) {}
 
   ngOnInit(): void {
@@ -41,9 +43,17 @@ export class CarritoComponent implements OnInit {
     this.total = 0;
   }
 
+  onOpcionRetiroSeleccionada(opcion: string) {
+    this.opcionRetiro = opcion;
+  }
+
   // Simula el proceso de pago
   procederPago(): void {
-    alert('¡Gracias por tu compra! Tu pedido ha sido procesado correctamente.');
-    this.vaciarCarrito();
+    if (this.opcionRetiro) {
+      alert(`¡Gracias por tu compra! Tu pedido será procesado para ${this.opcionRetiro}.`);
+      this.vaciarCarrito();
+    } else {
+      alert('Por favor, selecciona una opción de retiro.');
+    }
   }
 }

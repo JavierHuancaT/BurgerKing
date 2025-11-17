@@ -1,0 +1,11 @@
+<div class="retiro-container">
+  <h6>Elige una opción de entrega</h6>
+  <div class="opciones-wrapper">
+    <button 
+      *ngFor="let opcion of opciones"
+      [class.selected]="opcion === opcionElegida"
+      (click)="seleccionarOpcion(opcion)">
+      {{ opcion }}
+    </button>
+  </div>
+</div>

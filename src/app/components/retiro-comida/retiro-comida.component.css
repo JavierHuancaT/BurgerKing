@@ -1,0 +1,36 @@
+.retiro-container {
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 500px;
+}
+
+.retiro-container h2 {
+    color: #502314;
+    margin-bottom: 20px;
+}
+
+.opciones-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.opciones-wrapper button {
+    padding: 12px 25px;
+    font-size: 1em;
+    border: 2px solid #d32f2f;
+    background-color: #fff;
+    color: #d32f2f;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.opciones-wrapper button.selected {
+    background-color: #d32f2f;
+    color: #fff;
+}

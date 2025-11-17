@@ -29,6 +29,8 @@
       <p><b>Total: </b> ${{ total }}</p>
     </div>
 
+    <app-retiro-comida (opcionSeleccionada)="onOpcionRetiroSeleccionada($event)"></app-retiro-comida>
+
     <div class="acciones">
       <button class="btn-vaciar" (click)="vaciarCarrito()">Vaciar Carrito</button>
       <button (click)="procederPago()">Proceder al Pago</button>
@@ -38,6 +40,7 @@
   <ng-template #carritoVacio>
     <div class="carrito-container">
       <p>No tienes productos en tu carrito.</p>
+      <app-retiro-comida (opcionSeleccionada)="onOpcionRetiroSeleccionada($event)"></app-retiro-comida>
     </div>
   </ng-template>
 </body>
