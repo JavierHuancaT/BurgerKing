@@ -11,12 +11,8 @@ import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-p
 import { CarritoComponent } from './components/carrito/carrito.component';
 import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
-<<<<<<< HEAD
 import { RegisterUserComponent } from './components/register-user/register-user.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-=======
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
->>>>>>> origin/main
 
 
 @NgModule({
@@ -29,22 +25,14 @@ import { PersonalizacionComponent } from './components/personalizacion/personali
     PaginaPrincipalComponent,
     HeaderComponent,
     FooterComponent,
-<<<<<<< HEAD
-    RegisterUserComponent
-  
-=======
+    RegisterUserComponent,
     PersonalizacionComponent
->>>>>>> origin/main
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-<<<<<<< HEAD
     FormsModule,
     ReactiveFormsModule
-=======
-    ReactiveFormsModule  
->>>>>>> origin/main
   ],
   providers: [],
   bootstrap: [AppComponent]

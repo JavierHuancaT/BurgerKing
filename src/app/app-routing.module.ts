@@ -1,23 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
-<<<<<<< HEAD
 import { RegisterUserComponent } from './components/register-user/register-user.component';
-=======
 import { CarritoComponent } from './components/carrito/carrito.component';
-
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { ProductListComponent } from './components/admin/product-list/product-list.component';
 import { ProductFormComponent } from './components/admin/product-form/product-form.component';
 import { AdminGuard } from './guards/admin.guard';
 
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
->>>>>>> origin/main
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
 
-<<<<<<< HEAD
   // (Opcional) Si también quieres que funcione con /pagina-principal
   {
     path: 'pagina-principal',
@@ -29,11 +24,9 @@ const routes: Routes = [
     path: 'registro', // Cuando la URL sea /registro...
     component: RegisterUserComponent // ...mostrará el componente de registro.
   },
-=======
   { path: 'pagina-principal', component: PaginaPrincipalComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'personalizacion/:id', component: PersonalizacionComponent },
->>>>>>> origin/main
 
   {
     path: 'auth',
