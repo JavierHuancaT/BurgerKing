@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 
 @Component({
@@ -6,44 +7,68 @@ import { CarritoService } from 'src/app/services/carrito/carrito.service';
   templateUrl: './carrito.component.html',
   styleUrls: ['./carrito.component.css']
 })
-export class CarritoComponent implements OnInit {
+export class CarritoComponent implements OnInit, OnDestroy {
 
-  // Lista de productos añadidos al carrito
   productos: any[] = [];
+  visible = false;
+  contador = 0;
 
-  // Total general del carrito
-  total: number = 0;
+  private subs: Subscription[] = [];
 
   constructor(private carritoService: CarritoService) {}
 
   ngOnInit(): void {
-    // Cargar los productos actuales del carrito desde el servicio
-    this.productos = this.carritoService.obtenerProductos();
-    this.calcularTotal();
+    // Subscribir a productos
+    this.subs.push(
+      this.carritoService.productos$.subscribe(p => {
+        this.productos = p;
+      })
+    );
+
+    // Subscribir a visibilidad
+    this.subs.push(
+      this.carritoService.visible$.subscribe(v => {
+        this.visible = v;
+        if (v) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = '';
+      })
+    );
+
+    // Subscribir a contador (opcional, para internal)
+    this.subs.push(
+      this.carritoService.contador$.subscribe(c => this.contador = c)
+    );
   }
 
-  // Calcula el total general del carrito
-  calcularTotal(): void {
-    this.total = this.productos.reduce((sum, prod) => sum + prod.precio * prod.cantidad, 0);
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
+    document.body.style.overflow = '';
   }
 
-  // Permite eliminar un producto específico
+  // Abrir/cerrar desde el propio componente (X)
+  cerrar(): void {
+    this.carritoService.cerrarCarrito();
+  }
+
+  // Eliminar producto
   eliminarProducto(index: number): void {
     this.carritoService.eliminarProducto(index);
-    this.productos = this.carritoService.obtenerProductos();
-    this.calcularTotal();
   }
 
-  // Permite vaciar el carrito completo
-  vaciarCarrito(): void {
+  // Vaciar carrito
+  vaciar(): void {
     this.carritoService.vaciarCarrito();
-    this.productos = [];
-    this.total = 0;
   }
 
-  // Simula el proceso de pago
-  procederPago(): void {
-    alert('¡Gracias por tu compra! Tu pedido ha sido procesado correctamente.');
-    this.vaciarCarrito();
+  // Finalizar compra (simulación)
+  finalizarCompra(): void {
+    alert('Pedido enviado. Gracias por comprar en Burger King!');
+    this.carritoService.vaciarCarrito();
+    this.carritoService.cerrarCarrito();
+  }
+
+  // Calcular total (se llama desde template)
+  calcularTotal(): number {
+    return this.productos.reduce((s, p) => s + (p.precio || 0) * (p.cantidad || 1), 0);
   }
 }

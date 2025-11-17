@@ -27,9 +27,10 @@
 
       <!-- Si es CLIENTE: comportamiento normal de tienda -->
       <ng-template #clientArea>
-        <a routerLink="/carrito">
-          <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img">
-        </a>
+        <div class="cart-wrapper" (click)="toggleCarrito()" title="Ver carrito">
+          <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img" />
+          <span *ngIf="contadorCarrito > 0" class="cart-badge">{{ contadorCarrito }}</span>
+        </div>
 
         <span class="user-name">
           Hola, {{ user.name }}
@@ -43,12 +44,14 @@
 
     <!-- Caso 2: NO hay usuario logueado -->
     <ng-template #notLogged>
-      <a routerLink="/carrito">
-        <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img">
-      </a>
       <button class="btn-register" routerLink="/auth/register">Registrarse</button>
       <button class="btn-login" routerLink="/auth/login">Iniciar sesión</button>
     </ng-template>
 
+  </div>
+
+  <div class="cart-wrapper" (click)="toggleCarrito()" title="Ver carrito">
+    <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img" />
+    <span *ngIf="contadorCarrito > 0" class="cart-badge">{{ contadorCarrito }}</span>
   </div>
 </header>

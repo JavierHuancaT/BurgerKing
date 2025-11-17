@@ -1,75 +1,184 @@
-body {
-  background-color: #fdf2e9;
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-h1 {
-  color: #d32f2f;
-  text-align: center;
-  margin-top: 30px;
-  font-size: 2.5em;
-}
-
-.carrito-container {
-  width: 80%;
-  margin: 40px auto;
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-table {
+/* overlay: ocupa pantalla completa y centra el panel en esquina superior derecha */
+.carrito-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
   width: 100%;
-  border-collapse: collapse;
-  text-align: center;
+  height: 100%;
+  pointer-events: none; /* por defecto, evita interceptar clicks cuando no está visible */
+  z-index: 1200;
 }
 
-th {
-  background-color: #ffc107;
+/* panel visible */
+.carrito-overlay.active {
+  pointer-events: auto;
+}
+
+/* panel */
+.carrito-panel {
+  position: absolute;
+  top: 70px; 
+  right: 20px;
+  width: 28%;
+  max-width: 420px;
+  min-width: 300px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  overflow: hidden;
+  transform-origin: top right;
+  transform: translateY(-20px) scaleY(0.95);
+  opacity: 0;
+  transition: transform 300ms ease, opacity 300ms ease;
+}
+
+/* overlay activo -> mostrar panel */
+.carrito-overlay.active .carrito-panel {
+  transform: translateY(0) scaleY(1);
+  opacity: 1;
+}
+
+/* header interno */
+.carrito-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.carrito-header h3 {
+  margin: 0;
+  color: #d32f2f; /* rojo BK */
+  font-size: 1.1rem;
+}
+
+/* close button */
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
   color: #333;
-  padding: 12px;
-  font-size: 1.1em;
 }
 
-td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
+/* empty state */
+.carrito-empty {
+  padding: 26px 18px;
+  text-align: center;
+  color: #555;
 }
 
-button {
-  background-color: #d32f2f;
+.empty-img {
+  width: 80px;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.empty-actions {
+  margin-top: 14px;
+}
+
+/* content with items */
+.carrito-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+}
+
+.items-list {
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff8f2;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.item-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-data {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.item-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+
+.remove {
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* summary and actions */
+.cart-summary {
+  padding: 12px 16px 18px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.cart-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: #d62300;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  flex: 1;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-button:hover {
-  background-color: #b71c1c;
-}
-
-/* Sección del total */
-.total-container {
-  text-align: right;
-  margin-top: 20px;
-  font-size: 1.3em;
+.btn-secondary {
+  background: #f0f0f0;
   color: #333;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.acciones {
-  text-align: center;
-  margin-top: 30px;
-}
-
-.btn-vaciar {
-  background-color: #757575;
-}
-
-.btn-vaciar:hover {
-  background-color: #616161;
+/* Responsive: en pantallas muy pequeñas hacemos full width */
+@media (max-width: 720px) {
+  .carrito-panel {
+    width: calc(100% - 24px);
+    right: 12px;
+    left: 12px;
+    top: 80px;
+  }
 }

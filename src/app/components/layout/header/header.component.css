@@ -30,20 +30,20 @@
 }
 
 .nav-item:hover {
-  color: #D4202A; /* Rojo BK al pasar el mouse */
+  color: #D4202A; /* Rojo BK */
 }
 
 /*
  * 2. Logo (Centro)
  */
 .logo-container {
-  flex: 1; /* Ocupa 1/3 del espacio */
+  flex: 1;
   text-align: center;
 }
 
 .logo-img {
-  max-width: 80px;  /* <-- LA SOLUCIÓN: Limita el tamaño del logo */
-  height: auto;     /* Mantiene la proporción */
+  max-width: 80px;
+  height: auto;
 }
 
 /*
@@ -52,18 +52,37 @@
 .user-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Alinea a la derecha */
-  gap: 1rem; /* Espacio entre botones e icono */
-  flex: 1; /* Ocupa 1/3 del espacio */
+  gap: 1rem;
+  margin-left: auto;
+}
+
+/* CARRITO (Botón superior) */
+.cart-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin-left: auto;
 }
 
 .cart-img {
-  max-width: 30px; /* <-- LA SOLUCIÓN: Limita el tamaño del carrito */
+  width: 35px;
   height: auto;
-  cursor: pointer;
 }
 
-/* Estilos de los botones (Tus clases originales) */
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ffc107;
+  color: #000;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* BOTONES DEL HEADER */
 .btn-register, .btn-login {
   padding: 0.5rem 1rem;
   border: none;
@@ -73,7 +92,7 @@
 }
 
 .btn-register {
-  background-color: #007bff; /* Azul (como en el mockup) */
+  background-color: #007bff;
   color: white;
 }
 

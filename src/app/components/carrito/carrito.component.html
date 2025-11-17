@@ -1,43 +1,48 @@
-<body>
-  <h1>🛒 Carrito de Compras</h1>
-
-  <div class="carrito-container" *ngIf="productos.length > 0; else carritoVacio">
-    <table>
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio Unitario</th>
-          <th>Subtotal</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let producto of productos; let i = index">
-          <td>{{ producto.nombre }}</td>
-          <td>{{ producto.cantidad }}</td>
-          <td>${{ producto.precio }}</td>
-          <td>${{ producto.precio * producto.cantidad }}</td>
-          <td>
-            <button (click)="eliminarProducto(i)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="total-container">
-      <p><b>Total: </b> ${{ total }}</p>
+<!-- Overlay semitransparente (clic fuera cierra) -->
+<div class="carrito-overlay" [class.active]="visible" (click)="cerrar()">
+  <!-- Panel: detener el click propagation para no cerrar al interactuar dentro -->
+  <div class="carrito-panel" (click)="$event.stopPropagation()">
+    <div class="carrito-header">
+      <h3>Tu carrito</h3>
+      <button class="btn-close" (click)="cerrar()">✕</button>
     </div>
 
-    <div class="acciones">
-      <button class="btn-vaciar" (click)="vaciarCarrito()">Vaciar Carrito</button>
-      <button (click)="procederPago()">Proceder al Pago</button>
+    <!-- Contenido cuando está vacío -->
+    <div class="carrito-empty" *ngIf="productos.length === 0">
+      <p>Tu carrito está vacío</p>
+      <p class="small">Agrega productos desde el catálogo</p>
+      <div class="empty-actions">
+        <button class="btn-primary" (click)="cerrar()">Ver menú</button>
+      </div>
+    </div>
+
+    <!-- Contenido cuando hay productos -->
+    <div class="carrito-content" *ngIf="productos.length > 0">
+      <div class="items-list">
+        <div class="item" *ngFor="let p of productos; let i = index">
+          <img [src]="p.imagen || 'assets/default_product.png'" alt="{{p.nombre}}" class="item-img" />
+          <div class="item-data">
+            <div class="item-name">{{ p.nombre }}</div>
+            <div class="item-meta">
+              <span class="qty">x{{ p.cantidad }}</span>
+              <span class="price">{{ (p.precio * p.cantidad) | currency:'CLP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+          <button class="remove" (click)="eliminarProducto(i)">✕</button>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="subtotal">
+          <span>Subtotal</span>
+          <strong>{{ calcularTotal() | currency:'CLP':'symbol':'1.0-0' }}</strong>
+        </div>
+
+        <div class="cart-actions">
+          <button class="btn-secondary" (click)="vaciar()">Vaciar carrito</button>
+          <button class="btn-primary" (click)="finalizarCompra()">Finalizar pedido</button>
+        </div>
+      </div>
     </div>
   </div>
-
-  <ng-template #carritoVacio>
-    <div class="carrito-container">
-      <p>No tienes productos en tu carrito.</p>
-    </div>
-  </ng-template>
-</body>
+</div>
