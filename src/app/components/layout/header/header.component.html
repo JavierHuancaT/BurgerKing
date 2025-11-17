@@ -22,7 +22,13 @@
     <ng-container *ngIf="(currentUser$ | async) as user; else notLogged">
       <!-- Si es ADMIN: no mostramos nada en este header -->
       <ng-container *ngIf="user.role === 'Admin'; else clientArea">
-        <!-- vacío a propósito para Admin -->
+        <button class="btn-logout" (click)="logout()">
+          Cerrar sesión
+        </button>
+
+        <button class="btn-admin" routerLink="/admin/products">
+          Menu Admin
+        </button>
       </ng-container>
 
       <!-- Si es CLIENTE: comportamiento normal de tienda -->
@@ -38,6 +44,7 @@
         <button class="btn-logout" (click)="logout()">
           Cerrar sesión
         </button>
+
       </ng-template>
     </ng-container>
 
