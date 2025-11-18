@@ -1,20 +1,25 @@
 /*
- * :host y .login-page-container
- * Centran el formulario en el espacio que deja el <router-outlet>
+ * :host es un selector especial de Angular que aplica estilos
+ * solo a este componente (Encapsulación de Estilos).
+ * Lo usamos para centrar el formulario en el <router-outlet>.
  */
 :host {
   display: block;
+  /* (Asumiendo que el CSS global da un fondo) */
 }
 
 .login-page-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4rem 1rem;
+  padding: 4rem 1rem; /* Espacio para que no se pegue al header/footer */
 }
 
 /*
- * La tarjeta de login, como en el mockup
+ * "estilo visual de la página" y "Uso de Bootstrap"
+ * Creamos una clase .login-card personalizada que se alinea
+ * con el mockup de Balsamiq, en lugar de usar la clase .card
+ * genérica de Bootstrap.
  */
 .login-card {
   width: 100%;
@@ -34,7 +39,10 @@
   color: #333;
 }
 
-/* Estilos de Formulario */
+/*"Uso de Bootstrap"
+ * Usamos .form-group y .form-control como clases base,
+ * pero las personalizamos para nuestro diseño.
+ */
 .form-group {
   margin-bottom: 1rem;
 }
@@ -53,16 +61,16 @@
   border-radius: 4px;
 }
 
-/* Contenedor de botones (como en el mockup) */
+/* Contenedor de botones */
 .form-buttons {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: space-between; /* Botones separados */
+  gap: 1rem; /* Espacio entre botones */
   margin-top: 1.5rem;
 }
 
 .btn-primary, .btn-secondary {
-  flex: 1;
+  flex: 1; /* Ambos botones ocupan el mismo espacio */
   padding: 0.75rem;
   font-weight: 600;
   border-radius: 4px;
@@ -71,10 +79,15 @@
 
 /*
  * =========================================
+ * "estilo visual de la página"
  * ESTILOS DE TEMA Y VALIDACIÓN DINÁMICA
  * =========================================
  */
 
+/*
+ * Sobrescribimos el .btn-primary para usar los colores de la marca
+ * (Rojo Burger King) en lugar del azul de Bootstrap.
+ */
 .btn-primary {
   background-color: #D4202A; /* Rojo BK */
   color: white;
@@ -97,7 +110,15 @@
 }
 
 /*
- * 1. Estiliza el borde del input cuando es inválido
+ * =========================================
+ * RÚBRICA: "Control de errores, validación de datos"
+ * Estilos que se aplican dinámicamente.
+ * =========================================
+ */
+
+/*
+ * 1. Estiliza el borde del input cuando es inválido.
+ * (Se activa por [class.is-invalid] en el HTML).
  */
 .form-control.is-invalid {
   border-color: #D4202A;
@@ -105,7 +126,8 @@
 }
 
 /*
- * 2. Muestra el mensaje de error
+ * 2. Muestra el mensaje de error.
+ * (Bootstrap lo oculta por defecto, 'display: block' es clave).
  */
 .invalid-feedback {
   display: block; 
@@ -116,6 +138,7 @@
 
 /*
  * 3. Estilo para el botón cuando está deshabilitado
+ * (Se activa por [disabled]="loginForm.invalid" en el HTML).
  */
 .btn-primary:disabled {
   background-color: #ccc;

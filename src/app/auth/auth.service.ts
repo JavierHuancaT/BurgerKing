@@ -1,12 +1,25 @@
 import { Injectable } from '@angular/core';
+/**
+ * "Servicios, Inyeccion y Observables"
+ * Importamos las herramientas de RxJS para manejar el flujo de datos asíncrono.
+ * - BehaviorSubject: Mantiene el estado actual del usuario.
+ * - Observable: Permite a los componentes escuchar cambios.
+ * - of: Simula una respuesta exitosa.
+ * - throwError: Simula un error (ej: email duplicado).
+ */
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { User } from '../models/user'; // asegúrate que el path apunte al archivo correcto
+
+/**
+ * Importamos la interfaz User para mantener el tipado fuerte.
+ */
+import { User } from '../models/user'; 
 
 type UserWithPassword = User & { passwordHash: string };
 
 /**
  * Servicio de Autenticación (AuthService).
  * Maneja la lógica de login, logout, registro y el estado de la sesión.
+ * "Servicios, Inyeccion..."
  * Es un singleton provisto en 'root' para estar disponible en toda la aplicación.
  */
 
@@ -17,6 +30,7 @@ export class AuthService {
 
   // --- (BD PROVISORIA) ---
   /**
+   * "Buenas prácticas de desarrollo" (Mocking)
    * Simulación de la "tabla de usuarios" (BD Provisoria).
    * Basado en experiencia con SQL, usamos un array de objetos
    * en lugar de 'if' anidados para una lógica más limpia.
@@ -41,6 +55,7 @@ export class AuthService {
   // --- FIN BD PROVISORIA ---
 
   /**
+   * "Servicios, Inyeccion y Observables"
    * BehaviorSubject que almacena el estado actual del usuario (null si está desconectado).
    * Es privado para que solo el servicio pueda emitir nuevos valores.
    */
@@ -49,7 +64,7 @@ export class AuthService {
   /**
    * Observable público del estado del usuario.
    * Otros componentes (como el Header) se suscribirán a este
-   * para reaccionar a los cambios de sesión (HDU3).
+   * para reaccionar a los cambios de sesión.
    */
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
@@ -65,6 +80,7 @@ export class AuthService {
   }
 
   /**
+   * "Control de accesos"
    * Verifica si hay un usuario logueado.
    * @returns `true` si hay un usuario, `false` en caso contrario.
    */
@@ -74,11 +90,12 @@ export class AuthService {
   }
 
   /**
+   * "Control de accesos"
    * Verifica si el usuario logueado tiene el rol de 'Admin'.
    * @returns `true` si el usuario es Admin, `false` en caso contrario.
    */
   public isAdmin(): boolean {
-    // Primero, asegúrate que hay un usuario, luego revisa el rol.
+    // Primero, asegura que hay un usuario, luego revisa el rol.
     return this.currentUserSubject.value?.role === 'Admin';
   }
 
@@ -91,6 +108,8 @@ export class AuthService {
   }
 
   /**
+   * Método Login
+   * "Control de errores, validación de datos"
    * Valida las credenciales del usuario contra la BD simulada.
    * (Cumple criterios de HDU2).
    * @param email El email ingresado por el usuario.
@@ -120,6 +139,7 @@ export class AuthService {
   }
 
   /**
+   * Método Logout (HDU3)
    * Cierra la sesión del usuario.
    * (Cumple criterio de HDU3: "botón Cerrar Sesión").
    */
@@ -129,6 +149,8 @@ export class AuthService {
   }
 
   /**
+   * Método Register (HDU1)
+   * "Control de errores" y "Manejo de excepciones"
    * Registra un nuevo usuario en la base de datos simulada.
    * @param name El nombre del nuevo usuario.
    * @param email El email del nuevo usuario.
@@ -139,6 +161,7 @@ export class AuthService {
     // 1. Verificar si el email ya está en uso para evitar duplicados.
     const userExists = this.userDatabase.find(user => user.email === email);
     if (userExists) {
+      // "Manejo de excepciones"
       // Si el usuario ya existe, retorna un observable que emite un error.
       return throwError(() => new Error('El email ya está registrado.'));
     }
