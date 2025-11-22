@@ -1,4 +1,3 @@
-<!-- Header -->
 <header class="custom-header">
 
   <!-- Navegacion principal -->
@@ -15,42 +14,37 @@
     </a>
   </div>
 
-  <!-- Acciones del usuario -->
-  <div class="user-actions">
+  <!-- Acciones del usuario (nombre, logout, admin) -->
+  <div class="user-actions" *ngIf="(currentUser$ | async) as user; else notLogged">
 
-    <!-- Caso 1: HAY usuario logueado -->
-    <ng-container *ngIf="(currentUser$ | async) as user; else notLogged">
-      <!-- Si es ADMIN: no mostramos nada en este header -->
-      <ng-container *ngIf="user.role === 'Admin'; else clientArea">
-        <!-- vacío a propósito para Admin -->
-      </ng-container>
-
-      <!-- Si es CLIENTE: comportamiento normal de tienda -->
-      <ng-template #clientArea>
-        <div class="cart-wrapper" (click)="toggleCarrito()" title="Ver carrito">
-          <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img" />
-          <span *ngIf="contadorCarrito > 0" class="cart-badge">{{ contadorCarrito }}</span>
-        </div>
-
-        <span class="user-name">
-          Hola, {{ user.name }}
-        </span>
-
-        <button class="btn-logout" (click)="logout()">
-          Cerrar sesión
-        </button>
-      </ng-template>
+    <!-- CLIENTE -->
+    <ng-container *ngIf="user.role === 'Client'">
+      <span class="user-name">Hola, {{ user.name }}</span>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
     </ng-container>
 
-    <!-- Caso 2: NO hay usuario logueado -->
-    <ng-template #notLogged>
-      <button class="btn-register" routerLink="/auth/register">Registrarse</button>
-      <button class="btn-login" routerLink="/auth/login">Iniciar sesión</button>
-    </ng-template>
+    <!-- ADMIN -->
+    <ng-container *ngIf="user.role === 'Admin'">
+      <button class="btn-admin" routerLink="/admin/products">Menú Admin</button>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    </ng-container>
 
   </div>
 
-  <div class="cart-wrapper" (click)="toggleCarrito()" title="Ver carrito">
+  <!-- NO LOGUEADO -->
+  <ng-template #notLogged>
+    <div class="user-actions">
+      <button class="btn-register" routerLink="/auth/register">Registrarse</button>
+      <button class="btn-login" routerLink="/auth/login">Iniciar sesión</button>
+    </div>
+  </ng-template>
+
+  <!-- Carrito fijo (solo usuario cliente) -->
+  <div 
+    *ngIf="(currentUser$ | async)?.role === 'Client'" 
+    class="cart-fixed"
+    (click)="toggleCarrito()"
+    title="Ver carrito">
     <img src="assets/carrito.png" alt="Logo de Carrito" class="cart-img" />
     <span *ngIf="contadorCarrito > 0" class="cart-badge">{{ contadorCarrito }}</span>
   </div>
