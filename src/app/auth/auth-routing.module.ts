@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
+import { RegisterUserComponent } from '../components/register-user/register-user.component';
 
 /**
  * "Seguridad: Routes"
@@ -19,7 +20,10 @@ const routes: Routes = [
    component: LoginComponent
  },
  
- /* (Aquí irá la ruta 'register') */
+ {
+    path: 'register',   
+    component: RegisterUserComponent
+  },
  
  {
    /**
