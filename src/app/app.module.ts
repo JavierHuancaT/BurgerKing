@@ -11,6 +11,9 @@ import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-p
 import { CarritoComponent } from './components/carrito/carrito.component';
 import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
+import { RegisterUserComponent } from './components/register-user/register-user.component';
+import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
+import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.component';
 
 
 @NgModule({
@@ -22,12 +25,16 @@ import { FooterComponent } from './components/layout/footer/footer.component';
     CarritoComponent,
     PaginaPrincipalComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    RegisterUserComponent,
+    PersonalizacionComponent,
+    RetiroComidaComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule  
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

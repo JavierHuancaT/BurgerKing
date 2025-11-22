@@ -15,6 +15,8 @@ export class CarritoComponent implements OnInit, OnDestroy {
 
   private subs: Subscription[] = [];
 
+  opcionRetiro: string | undefined;
+
   constructor(private carritoService: CarritoService) {}
 
   ngOnInit(): void {
@@ -65,6 +67,11 @@ export class CarritoComponent implements OnInit, OnDestroy {
     alert('Pedido enviado. Gracias por comprar en Burger King!');
     this.carritoService.vaciarCarrito();
     this.carritoService.cerrarCarrito();
+  }
+  
+  // Recibir la opción desde RetiroComidaComponent
+  onOpcionRetiroSeleccionada(opcion: string) {
+    this.opcionRetiro = opcion;
   }
 
   // Calcular total (se llama desde template)
