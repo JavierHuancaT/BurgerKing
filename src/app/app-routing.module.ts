@@ -15,7 +15,7 @@ const routes: Routes = [
 
   // (Opcional) Si también quieres que funcione con /pagina-principal
   {
-    path: 'pagina-principal',
+    path: '',
     component: PaginaPrincipalComponent
   },
   
@@ -24,7 +24,6 @@ const routes: Routes = [
     path: 'registro', // Cuando la URL sea /registro...
     component: RegisterUserComponent // ...mostrará el componente de registro.
   },
-  { path: 'pagina-principal', component: PaginaPrincipalComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'personalizacion/:id', component: PersonalizacionComponent },
 
