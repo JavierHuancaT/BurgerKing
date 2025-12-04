@@ -1,6 +1,6 @@
 <div class="catalogo-container">
 
-  <!-- Categorías -->
+  <!-- Contenedor de botones de categorias -->
   <div class="categorias">
     <button
       *ngFor="let cat of categorias"
@@ -10,41 +10,28 @@
     </button>
   </div>
 
-  <!-- Título -->
+  <!-- Titulo que muestra la categoria seleccionada -->
   <h2 class="titulo-categoria">{{ categoriaSeleccionada }}</h2>
 
-  <!-- Grid de productos -->
+  <!-- Grid de productos (tarjetas) -->
   <div class="grid-productos">
     <div class="producto-card" *ngFor="let producto of productos[categoriaSeleccionada]">
-
-      <img [src]="producto.imagen" [alt]="producto.nombre" (click)="abrirDetalle(producto)" />
-
+      <img [src]="producto.imagen" [alt]="producto.nombre"/>
       <h3>{{ producto.nombre }}</h3>
+      <p class="descripcion-producto">{{ producto.descripcion }}</p>
+      <p class="precio-producto">${{ producto.precio | number }}</p>
+    
+    <!-- Selector de cantidad -->
+    <div class="selector-cantidad">
+      <button (click)="cambiarCantidad(producto, -1); $event.stopPropagation()">−</button>
+      <span>{{ producto.cantidad }}</span>
+      <button (click)="cambiarCantidad(producto, 1); $event.stopPropagation()">+</button>
+    </div>
 
-      <!-- BOTÓN: siempre visible -->
+      <!-- Boton para agregar al carrito -->
       <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
         Agregar al carrito
       </button>
-
     </div>
   </div>
-
-  <!-- Backdrop -->
-  <div class="modal-backdrop" *ngIf="productoSeleccionado" (click)="cerrarDetalle()"></div>
-
-  <!-- MODAL -->
-  <div class="modal-detalle" *ngIf="productoSeleccionado">
-    <button class="cerrar" (click)="cerrarDetalle()">✖</button>
-
-    <img [src]="productoSeleccionado.imagen" [alt]="productoSeleccionado.nombre">
-    <h2>{{ productoSeleccionado.nombre }}</h2>
-    <p>{{ productoSeleccionado.descripcion }}</p>
-
-    <!-- BOTÓN en el modal -->
-    <button class="btn-agregar-modal"
-            (click)="agregarAlCarrito(productoSeleccionado)">
-      Agregar al carrito
-    </button>
-  </div>
-
 </div>
