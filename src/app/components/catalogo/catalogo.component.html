@@ -1,1 +1,50 @@
-<p>catalogo works!</p>
+<div class="catalogo-container">
+
+  <!-- Categorías -->
+  <div class="categorias">
+    <button
+      *ngFor="let cat of categorias"
+      [class.activo]="cat === categoriaSeleccionada"
+      (click)="seleccionarCategoria(cat)">
+      {{ cat }}
+    </button>
+  </div>
+
+  <!-- Título -->
+  <h2 class="titulo-categoria">{{ categoriaSeleccionada }}</h2>
+
+  <!-- Grid de productos -->
+  <div class="grid-productos">
+    <div class="producto-card" *ngFor="let producto of productos[categoriaSeleccionada]">
+
+      <img [src]="producto.imagen" [alt]="producto.nombre" (click)="abrirDetalle(producto)" />
+
+      <h3>{{ producto.nombre }}</h3>
+
+      <!-- BOTÓN: siempre visible -->
+      <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
+        Agregar al carrito
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Backdrop -->
+  <div class="modal-backdrop" *ngIf="productoSeleccionado" (click)="cerrarDetalle()"></div>
+
+  <!-- MODAL -->
+  <div class="modal-detalle" *ngIf="productoSeleccionado">
+    <button class="cerrar" (click)="cerrarDetalle()">✖</button>
+
+    <img [src]="productoSeleccionado.imagen" [alt]="productoSeleccionado.nombre">
+    <h2>{{ productoSeleccionado.nombre }}</h2>
+    <p>{{ productoSeleccionado.descripcion }}</p>
+
+    <!-- BOTÓN en el modal -->
+    <button class="btn-agregar-modal"
+            (click)="agregarAlCarrito(productoSeleccionado)">
+      Agregar al carrito
+    </button>
+  </div>
+
+</div>

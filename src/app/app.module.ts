@@ -16,7 +16,6 @@ import { PersonalizacionComponent } from './components/personalizacion/personali
 import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.component';
 import { CatalogoComponent } from './components/catalogo/catalogo.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,

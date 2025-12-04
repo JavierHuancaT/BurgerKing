@@ -7,6 +7,7 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
 import { ProductListComponent } from './components/admin/product-list/product-list.component';
 import { ProductFormComponent } from './components/admin/product-form/product-form.component';
 import { AdminGuard } from './guards/admin.guard';
+import { CatalogoComponent } from './components/catalogo/catalogo.component';
 
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 
@@ -27,6 +28,8 @@ const routes: Routes = [
   { path: 'carrito', component: CarritoComponent },
   { path: 'personalizacion/:id', component: PersonalizacionComponent },
 
+  { path: 'catalogo', component: CatalogoComponent },
+  
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
