@@ -14,6 +14,7 @@ import { FooterComponent } from './components/layout/footer/footer.component';
 import { RegisterUserComponent } from './components/register-user/register-user.component';
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.component';
+import { CatalogoComponent } from './components/catalogo/catalogo.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.
     FooterComponent,
     RegisterUserComponent,
     PersonalizacionComponent,
-    RetiroComidaComponent
+    RetiroComidaComponent,
+    CatalogoComponent
   ],
   imports: [
     BrowserModule,
