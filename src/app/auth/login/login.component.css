@@ -4,6 +4,7 @@
  * Lo usamos para centrar el formulario en el <router-outlet>.
  */
 :host {
+  min-height: calc(100vh - 150px);
   display: block;
   /* (Asumiendo que el CSS global da un fondo) */
 }
