@@ -84,7 +84,7 @@ export class LoginComponent {
           this.router.navigate(['/admin']);
         } else {
           // (Ruta actualizada para el Cliente)
-          this.router.navigate(['/admin/productos']); 
+          this.router.navigate(['/catalogo']); 
         }
       } else {
         /**
