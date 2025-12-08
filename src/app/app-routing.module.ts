@@ -14,6 +14,10 @@ import { PersonalizacionComponent } from './components/personalizacion/personali
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
 
+  { path: 'app-pagina-principal',
+    component: PaginaPrincipalComponent
+  },
+
   // (Opcional) Si también quieres que funcione con /pagina-principal
   {
     path: '',

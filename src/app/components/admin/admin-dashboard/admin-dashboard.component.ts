@@ -26,7 +26,7 @@ export class AdminDashboardComponent {
   closeSidebar() { this.sidebarOpen = false; }
 
   logout(): void {
-    this.authService.logout();                     // limpia la sesión
-    this.router.navigate(['/pagina-principal']);   // vuelve a la tienda sin privilegios
+    this.router.navigate(['app-pagina-principal']);
+    this.authService.logout();                    
   }
 }
