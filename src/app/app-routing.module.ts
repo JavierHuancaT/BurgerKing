@@ -10,6 +10,8 @@ import { AdminGuard } from './guards/admin.guard';
 import { CatalogoComponent } from './components/catalogo/catalogo.component';
 
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
+import { PromocionesComponent } from './components/admin/promociones/promociones.component';
+import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
@@ -47,7 +49,9 @@ const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'products' },
       { path: 'products', component: ProductListComponent },
       { path: 'products/new', component: ProductFormComponent },
-      { path: 'products/:id/edit', component: ProductFormComponent }
+      { path: 'products/:id/edit', component: ProductFormComponent },
+      { path: 'promotions', component: PromocionesComponent },
+      { path: 'stock', component: GestionStockComponent },
     ]
   },
 

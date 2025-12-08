@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="m-0" style="color:var(--bk-brown)">Gestión de Stock (Ingredientes)</h5>
+  <a routerLink="../products">Volver a productos</a>
+</div>
+
+<div class="row g-4">
+  <!-- Formulario agregar -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title mb-3">Agregar ingrediente</h6>
+
+        <form [formGroup]="form" (ngSubmit)="agregar()">
+          <div class="mb-2">
+            <label class="form-label">Nombre</label>
+            <input class="form-control" [formGroup]="form" formControlName="nombre" placeholder="Queso, Lechuga...">
+          </div>
+
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label">Cantidad</label>
+              <input type="number" class="form-control" [formGroup]="form" formControlName="cantidad" min="0">
+            </div>
+            <div class="col-6">
+              <label class="form-label">Unidad</label>
+              <select class="form-select" [formGroup]="form" formControlName="unidad">
+                <option value="und">unidades</option>
+                <option value="g">gramos</option>
+                <option value="kg">kilogramos</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <button class="btn btn-bk-primary" type="submit">Agregar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista/edición -->
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title mb-3">Inventario</h6>
+
+        <ng-container *ngIf="(ingredientes$ | async) as ings; else vacio">
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="bg-light">
+                <tr>
+                  <th>Ingrediente</th>
+                  <th style="width:200px;">Cantidad</th>
+                  <th style="width:120px;">Unidad</th>
+                  <th style="width:200px;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let i of ings">
+                  <td class="fw-semibold">{{ i.nombre }}</td>
+                  <td>
+                    <input type="number" class="form-control form-control-sm"
+                           [value]="i.cantidad"
+                           (change)="setCantidad(i, $any($event.target).value)">
+                  </td>
+                  <td>{{ i.unidad || 'und' }}</td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-secondary" (click)="sumar(i,-1)">−</button>
+                      <button class="btn btn-sm btn-outline-secondary" (click)="sumar(i, 1)">+</button>
+                      <button class="btn btn-sm btn-outline-danger" (click)="eliminar(i)">Eliminar</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+
+        <ng-template #vacio>
+          <div class="text-muted">No hay ingredientes cargados.</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

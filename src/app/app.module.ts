@@ -15,6 +15,8 @@ import { RegisterUserComponent } from './components/register-user/register-user.
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.component';
 import { CatalogoComponent } from './components/catalogo/catalogo.component';
+import { PromocionesComponent } from './components/admin/promociones/promociones.component';
+import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { CatalogoComponent } from './components/catalogo/catalogo.component';
     RegisterUserComponent,
     PersonalizacionComponent,
     RetiroComidaComponent,
-    CatalogoComponent
+    CatalogoComponent,
+    PromocionesComponent,
+    GestionStockComponent
   ],
   imports: [
     BrowserModule,
