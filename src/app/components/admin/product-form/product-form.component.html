@@ -8,20 +8,36 @@
 <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
   <div class="col-md-6">
     <label class="form-label">Nombre</label>
-    <input type="text" class="form-control" formControlName="name" placeholder="Ej: Hamburguesa"/>
-    <div class="text-danger small" *ngIf="form.controls.name.touched && form.controls.name.invalid">
-      Nombre requerido (máx 80).
-    </div>
+    <input type="text" class="form-control" formControlName="name" placeholder="Ej: Whopper"/>
   </div>
 
   <div class="col-md-3">
     <label class="form-label">Precio base</label>
-    <input type="number" class="form-control" formControlName="basePrice" min="0" placeholder="0"/>
+    <input type="number" class="form-control" formControlName="basePrice" min="0"/>
   </div>
 
   <div class="col-md-3">
     <label class="form-label">Stock</label>
-    <input type="number" class="form-control" formControlName="stock" min="0" placeholder="0"/>
+    <input type="number" class="form-control" formControlName="stock" min="0"/>
+  </div>
+
+  <div class="col-md-12">
+    <label class="form-label">Descripción</label>
+    <input type="text" class="form-control" formControlName="descripcion"/>
+  </div>
+
+  <!-- Imagen -->
+  <div class="col-12">
+    <label class="form-label">Imagen (opcional)</label>
+    <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)"/>
+
+    <div class="mt-2 d-flex align-items-center gap-3" *ngIf="previewData">
+      <img [src]="previewData" alt="preview" class="border rounded"
+           style="width:96px;height:96px;object-fit:cover;">
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="quitarImagen()">
+        Quitar imagen
+      </button>
+    </div>
   </div>
 
   <div class="col-12 d-flex gap-2">

@@ -13,9 +13,11 @@ export class ProductFormComponent implements OnInit {
     name: ['', [Validators.required, Validators.maxLength(80)]],
     basePrice: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
+    descripcion: ['', [Validators.required, Validators.maxLength(200)]],
   });
 
-  editId: string | null = null;   // null = crear, string = editar
+  editId: string | null = null;
+  previewData: string | null = null; // ← Data URL para preview/guardar
 
   constructor(
     private fb: FormBuilder,
@@ -28,35 +30,84 @@ export class ProductFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       const p = this.srv.findById(id);
-      if (p) {
-        this.editId = id;
-        this.form.patchValue({
-          name: p.name,
-          basePrice: p.basePrice,
-          stock: p.stock
-        });
-      } else {
-        // id no válido: vuelve a la lista
-        this.router.navigate(['/admin/products']);
-      }
+      if (!p) { this.router.navigate(['/admin/products']); return; }
+      this.editId = id;
+      this.form.patchValue({
+        name: p.name,
+        basePrice: p.basePrice,
+        stock: p.stock,
+        descripcion: p.descripcion
+      });
+      this.previewData = p.imageData ?? null;  // ← muestra imagen existente
     }
   }
 
-  save(): void {
+  async onFileSelected(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    // (opcional) valida tamaño máx ~ 500KB
+    const maxBytes = 500 * 1024;
+    let blob: Blob = file;
+
+    // (opcional) redimensiona para no reventar localStorage
+    if (file.size > maxBytes) {
+      blob = await this.resizeImage(file, 512); // 512px de ancho máx
+    }
+
+    const dataURL = await this.blobToDataURL(blob);
+    this.previewData = dataURL; // listo para guardar
+  }
+
+  quitarImagen() {
+    this.previewData = null;
+  }
+
+  async save(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const { name, basePrice, stock } = this.form.value;
+    const { name, basePrice, stock, descripcion } = this.form.value;
 
     if (this.editId) {
-      // HDU7 — editar
       this.srv.update(this.editId, {
-        name: name!, basePrice: Number(basePrice), stock: Number(stock)
+        name: name!, basePrice: Number(basePrice), stock: Number(stock), descripcion: descripcion!,
+        imageData: this.previewData ?? undefined
       });
     } else {
-      // HDU4 — crear
       this.srv.add({
-        name: name!, basePrice: Number(basePrice), stock: Number(stock)
+        name: name!, basePrice: Number(basePrice), stock: Number(stock), descripcion: descripcion!,
+        imageData: this.previewData ?? undefined
       });
     }
     this.router.navigate(['/admin/products']);
+  }
+
+  // Helpers
+  private blobToDataURL(blob: Blob): Promise<string> {
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result as string);
+      reader.onerror = rej;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  private resizeImage(file: File, maxWidth: number): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject(new Error('no 2d ctx'));
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob((b) => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.85);
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
   }
 }

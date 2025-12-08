@@ -1,4 +1,14 @@
 import { Component } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { ProductService, Product } from '../../services/product.service';
+
+type ComboVM = {
+  id: string;
+  nombre: string;
+  imagen?: string;         // DataURL (base64) opcional
+  descripcion?: string;    // si no tienes, puedes dejar vacío o generar una
+  precio: number;          // precio numérico para formatear en template
+};
 
 @Component({
   selector: 'app-pagina-principal',
@@ -6,42 +16,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./pagina-principal.component.css']
 })
 export class PaginaPrincipalComponent {
-  combos = [
-  {
-    nombre: 'Whopper',
-    imagen: 'assets/whopper.png',
-    descripcion: 'Hamburguesa con carne a la parrilla, lechuga y tomate.',
-    precio: '$6.000'
-  },
-  {
-    nombre: 'Cheeseburger Doble',
-    imagen: 'assets/cheeseburger_doble.webp',
-    descripcion: 'Doble carne, doble queso, tomate, lechuga con papas fritas y bebida.',
-    precio: '$9.000'
-  },
-  {
-    nombre: 'Chicken Burger',
-    imagen: 'assets/chickenburger.webp',
-    descripcion: 'Filete de pollo, pepinillo, mayonesa, con papas fritas y bebida.',
-    precio: '$8.500'
-  },
-  {
-    nombre: 'Veggie Burger',
-    imagen: 'assets/veggieburger.webp',
-    descripcion: 'Hamburguesa vegetariana, queso, tomate con papas fritas y bebida.',
-    precio: '$8.000'
-  },
-    {
-    nombre: 'Nuggets',
-    imagen: 'assets/nuggets.png',
-    descripcion: 'Nuggets de pollo, salsa BBQ con papas fritas y bebida.',
-    precio: '$7.500'
-  },
-  {
-    nombre: 'Megastacker',
-    imagen: 'assets/megastacker.png',
-    descripcion: 'Hamburguesa con tocino, queso con papas fritas y bebida.',
-    precio: '$9.000'
-    }
-  ];
+
+  /** Stream que mapea los Product a la vista de “combos” */
+  combos$: Observable<ComboVM[]> = this.products.items$.pipe(
+    map((items: Product[]) =>
+      items.map(p => ({
+        id: p.id,
+        nombre: p.name,
+        imagen: p.imageData,                // Data URL guardada por el Admin (si existe)
+        descripcion: p.descripcion,                    // <- si no manejan descripción, lo dejamos vacío
+        precio: p.basePrice
+      }))
+    )
+  );
+  trackById = (_: number, it: { id: string }) => it.id;
+
+  constructor(private products: ProductService) {}
 }

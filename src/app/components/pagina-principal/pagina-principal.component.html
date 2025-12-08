@@ -1,4 +1,4 @@
-<!-- Titulo de combos -->
+<!-- Título de combos -->
 <section class="combos-header">
   <h2>Combos</h2>
 </section>
@@ -6,13 +6,32 @@
 <!-- Grid de productos (combos) -->
 <div class="combos-container">
   <div class="combos-grid">
-    <div class="combo-wrapper" *ngFor="let combo of combos">
-      <div class="combo-card">
-        <img [src]="combo.imagen" alt="Logo de combo nombre" class="combo-img">
-        <h5>{{ combo.nombre }}</h5>
-        <p class="combo-description">{{ combo.descripcion }}</p>
-        <p class="combo-price">{{ combo.precio }}</p>
+    <ng-container *ngIf="(combos$ | async) as combos; else empty">
+      <div class="combo-wrapper" *ngFor="let combo of combos; trackBy: trackById">
+        <div class="combo-card">
+          <!-- Imagen (si no hay imageData, podrías poner un placeholder en assets) -->
+          <img
+            [src]="combo.imagen || 'assets/placeholder-product.png'"
+            [alt]="'Imagen de ' + combo.nombre"
+            class="combo-img"
+          >
+          <h5>{{ combo.nombre }}</h5>
+
+          <!-- Descripción opcional -->
+          <p class="combo-description" *ngIf="combo.descripcion">{{ combo.descripcion }}</p>
+
+          <!-- Precio formateado (si no tienes CLP registrado, usa number simple) -->
+          <p class="combo-price">
+            ${{ combo.precio | number:'1.0-0' }}
+          </p>
+        </div>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-template #empty>
+      <div class="text-muted" style="padding:1rem;">
+        Aún no hay productos. Agrega desde el panel de <strong>Administrador → Productos</strong>.
+      </div>
+    </ng-template>
   </div>
 </div>
