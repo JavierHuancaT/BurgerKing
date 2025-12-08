@@ -1,152 +1,121 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable, map, Subscription } from 'rxjs';
+import { ProductService, Product } from 'src/app/services/product.service';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
+
+type ProductoVM = {
+  id: string;
+  nombre: string;
+  imagen?: string;
+  descripcion?: string;
+  precio: number;
+  categoria: string;
+};
 
 @Component({
   selector: 'app-catalogo',
   templateUrl: './catalogo.component.html',
   styleUrls: ['./catalogo.component.css']
 })
-export class CatalogoComponent {
-  constructor(private carritoService: CarritoService) {}
-  categorias = ['Combos de Carne', 'Combos de Pollo', 'Snacks', 'Postres', 'Bebidas'];
-  categoriaSeleccionada = 'Combos de Carne';
+export class CatalogoComponent implements OnInit, OnDestroy {
+  constructor(
+    private carritoService: CarritoService,
+    private productSrv: ProductService
+  ) {}
 
-  productos: any = {
-    'Combos de Carne': [
-      {
-        nombre: 'Whopper',
-        imagen: 'assets/whopper_combo.png',
-        descripcion: 'Hamburguesa con carne a la parrilla, lechuga y tomate.',
-        precio: 6000,
-        cantidad: 1
-      },
-      {
-        nombre: 'Bacon King',
-        imagen: 'assets/baconking_combo.png',
-        descripcion: 'Doble carne, doble queso y tocino.',
-        precio: 7500,
-        cantidad: 1
-      },
-      {
-        nombre: 'Mega Stacker',
-        imagen: 'assets/megastacker.png',
-        descripcion: 'Tres carnes a la parrilla con queso cheddar, tocino y salsa Stacker.',
-        precio: 9000,
-        cantidad: 1
-      }
-    ],
-    'Combos de Pollo': [
-      {
-        nombre: 'Chicken Burger',
-        imagen: 'assets/chickenburger.webp',
-        descripcion: 'Filete de pollo crujiente con pepinillos y mayonesa.',
-        precio: 8500,
-        cantidad: 1
-      },
-      {
-        nombre: 'King Pollo',
-        imagen: 'assets/king_pollo_combo.png',
-        descripcion: 'Hamburguesa de pollo empanizado.',
-        precio: 8000,
-        cantidad: 1
-      }
-    ],
-    'Snacks': [
-      {
-        nombre: 'Papas Fritas',
-        imagen: 'assets/papas_fritas.png',
-        descripcion: 'Papas fritas doradas y crujientes.',
-        precio: 2000,
-        cantidad: 1
-      },
-      {
-        nombre: 'Aros de Cebolla',
-        imagen: 'assets/aros_cebolla.png',
-        descripcion: 'Aros de cebolla empanizados y crocantes.',
-        precio: 2500,
-        cantidad: 1
-      },
-      {
-        nombre: 'Nuggets',
-        imagen: 'assets/nuggets_unidades.png',
-        descripcion: 'Nuggets de pollo crocantes.',
-        precio: 2000,
-        cantidad: 1
-      }
-    ],
-    'Postres': [
-      {
-        nombre: 'King Fusion Galleta Chocolate',
-        imagen: 'assets/king_fusion_chocolate.png',
-        descripcion: 'Helado con chocolate y trozos de galleta.',
-        precio: 2500,
-        cantidad: 1
-      },
-      {
-        nombre: 'King Fusion Galleta Manjar',
-        imagen: 'assets/king_fusion_manjar.png',
-        descripcion: 'Helado con manjar y trozos de galleta.',
-        precio: 2500,
-        cantidad: 1
-      },
-      {
-        nombre: 'Cono Simple',
-        imagen: 'assets/cono_simple.png',
-        descripcion: 'Clásico helado de vainilla.',
-        precio: 2500,
-        cantidad: 1
-      }
-    ],
-    'Bebidas': [
-      {
-        nombre: 'Coca-Cola',
-        imagen: 'assets/coca_cola.png',
-        descripcion: 'Bebida gaseosa bien fría.',
-        precio: 2000,
-        cantidad: 1
-      },
-      {
-        nombre: 'Pepsi',
-        imagen: 'assets/pepsi.png',
-        descripcion: 'Bebida con sabor cola.',
-        precio: 2000,
-        cantidad: 1
-      },
-      {
-        nombre: 'Bilz',
-        imagen: 'assets/bilz.png',
-        descripcion: 'Bebida dulce sabor frutilla.',
-        precio: 2000,
-        cantidad: 1
-      }
-    ]
+  // Orden deseado de categorías
+  private ordenCategorias = [
+    'Combos de Carne',
+    'Combos de Pollo',
+    'Bebidas',
+    'Snacks',
+    'Postres'
+  ];
+  private idxCat = (cat: string) => {
+    const i = this.ordenCategorias.indexOf(cat);
+    return i === -1 ? Number.POSITIVE_INFINITY : i;
   };
 
-  productoSeleccionado: any = null;
+  // Estado de selección en la UI
+  categoriaSeleccionada: string | null = null;
 
-  // Cambia la categoria activa cuando el usuario selecciona una
-  seleccionarCategoria(categoria: string) {
-    this.categoriaSeleccionada = categoria;
+  // Cantidades elegidas por el usuario (id → cantidad)
+  private cantidades = new Map<string, number>();
+
+  // Categorías derivadas de los productos (ordenadas según preferencia)
+  categorias$: Observable<string[]> = this.productSrv.items$.pipe(
+    map((items: Product[]) => {
+      const set = new Set<string>();
+      for (const p of items) set.add(this.getCategoria(p));
+      return Array.from(set).sort((a, b) => {
+        const ia = this.idxCat(a), ib = this.idxCat(b);
+        return ia === ib ? a.localeCompare(b) : ia - ib;
+      });
+    })
+  );
+
+  // Mapa {categoria: ProductoVM[]} para render
+  productosPorCategoria$: Observable<Record<string, ProductoVM[]>> = this.productSrv.items$.pipe(
+    map((items: Product[]) => {
+      const mapa: Record<string, ProductoVM[]> = {};
+      for (const p of items) {
+        const cat = this.getCategoria(p);
+        (mapa[cat] ||= []).push({
+          id: p.id,
+          nombre: p.name,
+          imagen: p.imageData,
+          // compatibilidad: usa 'descripcion' si existe, si no 'description'
+          descripcion: (p as any).descripcion ?? (p as any).description,
+          precio: p.basePrice,
+          categoria: cat
+        });
+      }
+      // orden simple por nombre dentro de cada categoría
+      Object.values(mapa).forEach(arr => arr.sort((a, b) => a.nombre.localeCompare(b.nombre)));
+      return mapa;
+    })
+  );
+
+  private sub?: Subscription;
+
+  ngOnInit(): void {
+    // Selecciona la primera categoría disponible según el orden preferido
+    this.sub = this.categorias$.subscribe(cats => {
+      if (!cats?.length) {
+        this.categoriaSeleccionada = null;
+        return;
+      }
+      if (!this.categoriaSeleccionada || !cats.includes(this.categoriaSeleccionada)) {
+        this.categoriaSeleccionada = cats[0]; // ya viene ordenado
+      }
+    });
   }
 
-  // Aumenta o reduce la cantidad del producto, sin permitir bajar de 1
-  cambiarCantidad(prod: any, delta: number) {
-    prod.cantidad = Math.max(1, prod.cantidad + delta);
-  }
-  // Agrega el producto al carrito con su cantidad actual
-  agregarAlCarrito(prod: any) {
+  ngOnDestroy(): void { this.sub?.unsubscribe(); }
 
+  // Helpers de UI
+  seleccionarCategoria(cat: string) { this.categoriaSeleccionada = cat; }
+  cantidadDe(id: string): number { return this.cantidades.get(id) ?? 1; }
+  cambiarCantidad(id: string, delta: number) {
+    const next = Math.max(1, this.cantidadDe(id) + delta);
+    this.cantidades.set(id, next);
+  }
+
+  agregarAlCarrito(prod: ProductoVM) {
     this.carritoService.agregarProducto({
       nombre: prod.nombre,
       imagen: prod.imagen,
-      precio: prod.precio,           
-      cantidad: prod.cantidad
+      precio: prod.precio,
+      cantidad: this.cantidadDe(prod.id)
     });
-
-    // Reinicia la cantidad a 1 despues de agregarlo
-    prod.cantidad = 1
-    
-    // Abre el panel del carrito
+    // Resetea cantidad del item a 1
+    this.cantidades.set(prod.id, 1);
     this.carritoService.abrirCarrito();
+  }
+
+  private getCategoria(p: Product): string {
+    // compatibilidad: usa 'categoria' si existe, si no 'category'
+    const cat = (p as any).categoria ?? (p as any).category;
+    return (typeof cat === 'string' && cat.trim()) ? cat.trim() : 'Otros';
   }
 }

@@ -7,6 +7,7 @@ export interface Product {
   basePrice: number;
   stock: number;
   descripcion?: string;
+  categoria?: string;
   imageData?: string;
 }
 

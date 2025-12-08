@@ -1,7 +1,7 @@
 <div class="catalogo-container">
 
-  <!-- Contenedor de botones de categorias -->
-  <div class="categorias">
+  <!-- Categorías (dinámicas, derivadas de ProductService) -->
+  <div class="categorias" *ngIf="(categorias$ | async) as categorias">
     <button
       *ngFor="let cat of categorias"
       [class.activo]="cat === categoriaSeleccionada"
@@ -10,28 +10,48 @@
     </button>
   </div>
 
-  <!-- Titulo que muestra la categoria seleccionada -->
-  <h2 class="titulo-categoria">{{ categoriaSeleccionada }}</h2>
+  <!-- Título -->
+  <h2 class="titulo-categoria">
+    {{ categoriaSeleccionada || 'Sin productos' }}
+  </h2>
 
-  <!-- Grid de productos (tarjetas) -->
-  <div class="grid-productos">
-    <div class="producto-card" *ngFor="let producto of productos[categoriaSeleccionada]">
-      <img [src]="producto.imagen" [alt]="producto.nombre"/>
-      <h3>{{ producto.nombre }}</h3>
-      <p class="descripcion-producto">{{ producto.descripcion }}</p>
-      <p class="precio-producto">${{ producto.precio | number }}</p>
-    
-    <!-- Selector de cantidad -->
-    <div class="selector-cantidad">
-      <button (click)="cambiarCantidad(producto, -1); $event.stopPropagation()">−</button>
-      <span>{{ producto.cantidad }}</span>
-      <button (click)="cambiarCantidad(producto, 1); $event.stopPropagation()">+</button>
-    </div>
+  <!-- Grid de productos -->
+  <div class="grid-productos" *ngIf="(productosPorCategoria$ | async) as mapa">
+    <ng-container *ngIf="categoriaSeleccionada && mapa[categoriaSeleccionada]?.length; else vacio">
+      <div class="producto-card" *ngFor="let producto of mapa[categoriaSeleccionada]">
+        <img
+          [src]="producto.imagen || 'assets/placeholder-product.png'"
+          [alt]="'Imagen de ' + producto.nombre"/>
 
-      <!-- Boton para agregar al carrito -->
-      <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
-        Agregar al carrito
-      </button>
-    </div>
+        <h3>{{ producto.nombre }}</h3>
+
+        <p class="descripcion-producto" *ngIf="producto.descripcion">
+          {{ producto.descripcion }}
+        </p>
+
+        <p class="precio-producto">
+          ${{ producto.precio | number:'1.0-0' }}
+        </p>
+
+        <!-- Selector de cantidad -->
+        <div class="selector-cantidad">
+          <button (click)="cambiarCantidad(producto.id, -1); $event.stopPropagation()">−</button>
+          <span>{{ cantidadDe(producto.id) }}</span>
+          <button (click)="cambiarCantidad(producto.id, 1);  $event.stopPropagation()">+</button>
+        </div>
+
+        <!-- Agregar al carrito -->
+        <button class="btn-agregar"
+                (click)="agregarAlCarrito(producto); $event.stopPropagation()">
+          Agregar al carrito
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #vacio>
+      <div class="text-muted" style="padding:1rem;">
+        No hay productos para mostrar. Crea productos desde <strong>Admin → Productos</strong>.
+      </div>
+    </ng-template>
   </div>
 </div>

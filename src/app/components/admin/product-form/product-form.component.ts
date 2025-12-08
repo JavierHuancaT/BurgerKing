@@ -9,11 +9,15 @@ import { ProductService } from '../../../services/product.service';
   styleUrls: ['./product-form.component.css']
 })
 export class ProductFormComponent implements OnInit {
+
+  categorias: string[] = ['Combos de Carne', 'Combos de Pollo', 'Snacks', 'Postres', 'Bebidas', 'Otros'];
+
   form = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(80)]],
     basePrice: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
-    descripcion: ['', [Validators.required, Validators.maxLength(200)]],
+    descripcion: ['', [Validators.maxLength(200)]],
+    categoria: ['Otros', [Validators.required]]
   });
 
   editId: string | null = null;
@@ -36,7 +40,8 @@ export class ProductFormComponent implements OnInit {
         name: p.name,
         basePrice: p.basePrice,
         stock: p.stock,
-        descripcion: p.descripcion
+        descripcion: p.descripcion,
+        categoria: (p.categoria && p.categoria.trim()) ? p.categoria : 'Otros'
       });
       this.previewData = p.imageData ?? null;  // ← muestra imagen existente
     }
@@ -66,16 +71,18 @@ export class ProductFormComponent implements OnInit {
 
   async save(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const { name, basePrice, stock, descripcion } = this.form.value;
+    const { name, basePrice, stock, descripcion, categoria } = this.form.value;
 
     if (this.editId) {
       this.srv.update(this.editId, {
         name: name!, basePrice: Number(basePrice), stock: Number(stock), descripcion: descripcion!,
+        categoria: categoria!,
         imageData: this.previewData ?? undefined
       });
     } else {
       this.srv.add({
         name: name!, basePrice: Number(basePrice), stock: Number(stock), descripcion: descripcion!,
+        categoria: categoria!,
         imageData: this.previewData ?? undefined
       });
     }
