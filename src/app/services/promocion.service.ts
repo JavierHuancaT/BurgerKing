@@ -32,4 +32,9 @@ export class PromocionService {
     const next = this._items$.value.filter(x => x.id !== id);
     this.write(next); this._items$.next(next);
   }
+
+  getByCodigo(codigo: string) {
+  const cod = codigo.trim().toUpperCase();
+  return this._items$.value.find(p => p.codigo === cod) ?? null;
+}
 }

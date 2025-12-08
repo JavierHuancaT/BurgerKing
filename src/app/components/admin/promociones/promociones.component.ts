@@ -35,6 +35,11 @@ export class PromocionesComponent {
   crear() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.value;
+    const cod = v.codigo!.trim().toUpperCase();
+    if (this.promoSrv.getByCodigo(cod)) {
+      alert('El código ya existe. Usa otro.');
+      return;
+    }
     this.promoSrv.add({
       codigo: v.codigo!.trim().toUpperCase(),
       descuentoPorc: Number(v.descuentoPorc),
