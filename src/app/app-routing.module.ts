@@ -12,6 +12,8 @@ import { CatalogoComponent } from './components/catalogo/catalogo.component';
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 import { PromocionesComponent } from './components/admin/promociones/promociones.component';
 import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
+import { PerfilComponent } from './components/perfil/perfil.component';
+import { ClienteGuard } from './guards/cliente.guard';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
@@ -40,6 +42,8 @@ const routes: Routes = [
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
+
+  { path: 'perfil', component: PerfilComponent, canActivate: [ClienteGuard] },
 
   {
     path: 'admin',

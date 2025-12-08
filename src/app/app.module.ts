@@ -17,6 +17,7 @@ import { RetiroComidaComponent } from './components/retiro-comida/retiro-comida.
 import { CatalogoComponent } from './components/catalogo/catalogo.component';
 import { PromocionesComponent } from './components/admin/promociones/promociones.component';
 import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
+import { PerfilComponent } from './components/perfil/perfil.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { GestionStockComponent } from './components/admin/gestion-stock/gestion-
     RetiroComidaComponent,
     CatalogoComponent,
     PromocionesComponent,
-    GestionStockComponent
+    GestionStockComponent,
+    PerfilComponent
   ],
   imports: [
     BrowserModule,

@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { User } from '../../../models/user';
-import { Subscription } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 
 @Component({
@@ -12,8 +11,10 @@ import { CarritoService } from 'src/app/services/carrito/carrito.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  contadorCarrito: number = 0;
+  contadorCarrito = 0;
   private subs: Subscription[] = [];
+
+  // Observable del usuario actual (para usar con async en el template)
   currentUser$: Observable<User | null> = this.authService.currentUser$;
 
   constructor(
@@ -23,19 +24,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subs.push(this.carritoService.contador$.subscribe(c => this.contadorCarrito = c));
-  }
-
-  toggleCarrito(): void {
-    this.carritoService.toggleVisible();
+    // Suscripción al contador del carrito
+    this.subs.push(
+      this.carritoService.contador$.subscribe(c => this.contadorCarrito = c)
+    );
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
   }
 
+  toggleCarrito(): void {
+    this.carritoService.toggleVisible();
+  }
+
   logout(): void {
-    this.router.navigate(['/app-pagina-principal']);
+    // 1) cerrar sesión
     this.authService.logout();
+
+    // 2) redirigir a la página principal (elige la que uses)
+    // Si tu home es "/":
+    this.router.navigate(['/']);
+
+    // Si tu home es "/pagina-principal":
+    // this.router.navigate(['/pagina-principal']);
+
+    // Si estabas usando "/app-pagina-principal" (no usual):
+    // this.router.navigate(['/app-pagina-principal']);
   }
 }

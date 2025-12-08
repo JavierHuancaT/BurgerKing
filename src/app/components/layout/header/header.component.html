@@ -20,11 +20,16 @@
     <!-- CLIENTE -->
     <ng-container *ngIf="user.role === 'Client'">
       <span class="user-name">Hola, {{ user.name }}</span>
+
+      <!-- NUEVO: botón Mi Perfil -->
+      <a class="btn-profile" routerLink="/perfil">Mi Perfil</a>
+
       <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
     </ng-container>
 
     <!-- ADMIN -->
     <ng-container *ngIf="user.role === 'Admin'">
+      <span class="user-name">Hola, {{ user.name }}</span>
       <button class="btn-admin" routerLink="/admin/products">Menú Admin</button>
       <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
     </ng-container>
@@ -40,8 +45,8 @@
   </ng-template>
 
   <!-- Carrito fijo (solo usuario cliente) -->
-  <div 
-    *ngIf="(currentUser$ | async)?.role === 'Client'" 
+  <div
+    *ngIf="(currentUser$ | async)?.role === 'Client'"
     class="cart-fixed"
     (click)="toggleCarrito()"
     title="Ver carrito">

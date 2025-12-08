@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-carrito',
@@ -14,10 +15,12 @@ export class CarritoComponent implements OnInit, OnDestroy {
   contador = 0;
 
   private subs: Subscription[] = [];
-
   opcionRetiro: string | undefined;
 
-  constructor(private carritoService: CarritoService) {}
+  constructor(
+    private carritoService: CarritoService,
+    private auth: AuthService
+  ) {}
 
   ngOnInit(): void {
     // Subscribir a productos
@@ -62,19 +65,34 @@ export class CarritoComponent implements OnInit, OnDestroy {
     this.carritoService.vaciarCarrito();
   }
 
-  // Finalizar compra (simulación)
+  // Finalizar compra → crea un pedido en localStorage con su propia KEY
   finalizarCompra(): void {
-    alert('Pedido enviado. Gracias por comprar en Burger King!');
+    // Toma el usuario actual (si hay sesión) y lo mapea a la metadata del pedido
+    const u = this.auth.getCurrentUser();
+    const usuarioMeta = u ? { id: u.id, nombre: u.name, email: u.email } : undefined;
+
+    const result = this.carritoService.confirmarPedido(
+      this.opcionRetiro,     // retiro en tienda / delivery (según tu componente hijo)
+      usuarioMeta            // opcional: si no hay login, va undefined
+    );
+
+    if (!result) {
+      alert('Tu carrito está vacío.');
+      return;
+    }
+
+    // Feedback + limpieza de carrito
+    alert(`Pedido enviado ✅\nCódigo: ${result.id}`);
     this.carritoService.vaciarCarrito();
     this.carritoService.cerrarCarrito();
   }
-  
+
   // Recibir la opción desde RetiroComidaComponent
   onOpcionRetiroSeleccionada(opcion: string) {
     this.opcionRetiro = opcion;
   }
 
-  // Calcular total (se llama desde template)
+  // Calcular total (se llama desde el template)
   calcularTotal(): number {
     return this.productos.reduce((s, p) => s + (p.precio || 0) * (p.cantidad || 1), 0);
   }
