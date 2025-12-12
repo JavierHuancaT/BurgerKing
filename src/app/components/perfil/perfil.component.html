@@ -34,22 +34,43 @@
       (click)="verDetalle(p.id)">
       <div>
         <div class="fw-semibold">{{ p.id }}</div>
-        <div class="small text-muted">{{ p.fechaISO | date:'short' }} • {{ p.opcionRetiro || '—' }}</div>
+        <div class="small text-muted">
+          {{ p.fechaISO | date:'short' }} • {{ p.opcionRetiro || '—' }}
+        </div>
       </div>
+
       <div class="text-end">
-        <div class="fw-semibold">{{ p.total ?? 0 | currency:'CLP':'symbol':'1.0-0' }}</div>
+        <div class="fw-semibold">
+          {{ (p.total ?? 0) | currency:'CLP':'symbol':'1.0-0' }}
+        </div>
         <div class="small text-muted">{{ p.itemCount || 0 }} ítems</div>
+        <!-- Estado del pedido (badge) -->
+        <div class="mt-1">
+          <span class="badge" [ngClass]="estadoBadgeClass(estadoDe(p))">
+            {{ estadoLabel(estadoDe(p)) }}
+          </span>
+        </div>
       </div>
     </button>
   </div>
 
   <div *ngIf="detalleSeleccionado as d">
-    <h6 class="mb-2">Detalle del pedido {{ d.id }}</h6>
+    <h6 class="mb-2">
+      Detalle del pedido {{ d.id }}
+    </h6>
+
     <div class="card">
       <div class="card-body">
-        <div class="small text-muted mb-2">
-          Fecha: {{ d.fechaISO | date:'short' }} • {{ d.opcionRetiro || '—' }}
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="small text-muted">
+            Fecha: {{ d.fechaISO | date:'short' }} • {{ d.opcionRetiro || '—' }}
+          </div>
+          <!-- Estado también en el detalle -->
+          <span class="badge" [ngClass]="estadoBadgeClass(estadoDe(d))">
+            {{ estadoLabel(estadoDe(d)) }}
+          </span>
         </div>
+
         <div class="table-responsive">
           <table class="table align-middle">
             <thead>
@@ -64,7 +85,8 @@
             <tbody>
               <tr *ngFor="let it of d.items">
                 <td>
-                  <img [src]="it.imagen || 'assets/default_product.png'" class="rounded" style="width:48px;height:48px;object-fit:cover;">
+                  <img [src]="it.imagen || 'assets/default_product.png'"
+                       class="rounded" style="width:48px;height:48px;object-fit:cover;">
                 </td>
                 <td>
                   <div class="fw-semibold">{{ it.nombre }}</div>
@@ -72,13 +94,18 @@
                     {{ it.personalizaciones | json }}
                   </div>
                 </td>
-                <td class="text-end">{{ it.precio | currency:'CLP':'symbol':'1.0-0' }}</td>
+                <td class="text-end">
+                  {{ it.precio | currency:'CLP':'symbol':'1.0-0' }}
+                </td>
                 <td class="text-end">{{ it.cantidad }}</td>
-                <td class="text-end">{{ (it.precio * it.cantidad) | currency:'CLP':'symbol':'1.0-0' }}</td>
+                <td class="text-end">
+                  {{ (it.precio * it.cantidad) | currency:'CLP':'symbol':'1.0-0' }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+
         <div class="d-flex justify-content-end gap-4">
           <div>Subtotal: <strong>{{ d.subtotal | currency:'CLP':'symbol':'1.0-0' }}</strong></div>
           <div>Total: <strong>{{ d.total | currency:'CLP':'symbol':'1.0-0' }}</strong></div>

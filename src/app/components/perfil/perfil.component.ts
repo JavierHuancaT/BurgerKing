@@ -1,50 +1,111 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PedidosService, PedidoIndice, PedidoDetalle } from 'src/app/services/pedidos.service';
+
+type PedidoEstado = 'PENDIENTE' | 'EN_COCINA' | 'LISTO' | 'EN_REPARTO' | 'COMPLETADO' | 'CANCELADO';
 
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css']
 })
-export class PerfilComponent implements OnInit {
+export class PerfilComponent implements OnInit, OnDestroy {
 
   usuario = this.auth.getCurrentUser();
   pedidos: PedidoIndice[] = [];
   detalleSeleccionado: PedidoDetalle | null = null;
 
-  constructor(private auth: AuthService, private pedidosSrv: PedidosService, private router: Router) {}
+  private onStorage = () => {
+    // refresca la lista cuando el admin o el sistema cambien estados
+    this.refrescar();
+  };
+
+  constructor(
+    private auth: AuthService,
+    private pedidosSrv: PedidosService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     if (!this.usuario) { this.router.navigate(['/auth/login']); return; }
-    this.pedidos = this.pedidosSrv.obtenerPorUsuario(this.usuario.id);
-    this.enriquecerTotales();
+    this.refrescar();
+    // tiempo real (misma pestaña / otras pestañas)
+    window.addEventListener('storage', this.onStorage);
+    window.addEventListener('bk-pedidos-changed', this.onStorage as any);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('storage', this.onStorage);
+    window.removeEventListener('bk-pedidos-changed', this.onStorage as any);
+  }
+
+  private refrescar(): void {
+    this.pedidos = this.pedidosSrv.obtenerPorUsuario(this.usuario!.id);
+    this.enriquecerTotalesYEstado();
+    if (this.detalleSeleccionado) {
+      // si hay un detalle abierto, recárgalo para ver estado actualizado
+      this.detalleSeleccionado = this.pedidosSrv.obtenerDetallePorId(this.detalleSeleccionado.id);
+    }
   }
 
   verDetalle(pedidoId: string) {
     this.detalleSeleccionado = this.pedidosSrv.obtenerDetallePorId(pedidoId);
   }
 
-  /**
-   * Si total o itemCount faltan (o son 0) en el índice,
-   * los calculamos leyendo el detalle del pedido.
+  /** Si total / itemCount faltan en el índice, los completamos leyendo el detalle.
+   *  También completamos el estado si no viniera en el índice.
    */
-  private enriquecerTotales() {
+  private enriquecerTotalesYEstado() {
     this.pedidos = this.pedidos.map(p => {
-      const faltaTotal = !p.total || p.total <= 0;
-      const faltaCount = !p.itemCount || p.itemCount <= 0;
-      if (!faltaTotal && !faltaCount) return p;
+      const det = (!p.total || !p.itemCount || (p as any).estado == null)
+        ? this.pedidosSrv.obtenerDetallePorId(p.id)
+        : null;
 
-      const det = this.pedidosSrv.obtenerDetallePorId(p.id);
-      if (!det) return p;
+      const itemCount = p.itemCount && p.itemCount > 0
+        ? p.itemCount
+        : (det?.items?.reduce((s, it) => s + (it.cantidad || 0), 0) ?? 0);
 
-      const itemCount = det.items?.reduce((s, it) => s + (it.cantidad || 0), 0) || 0;
-      const total = typeof det.total === 'number'
-        ? det.total
-        : det.items?.reduce((s, it) => s + (it.precio || 0) * (it.cantidad || 1), 0) || 0;
+      const total = p.total && p.total > 0
+        ? p.total
+        : (typeof det?.total === 'number'
+            ? det!.total
+            : (det?.items?.reduce((s, it) => s + (it.precio || 0) * (it.cantidad || 1), 0) ?? 0));
 
-      return { ...p, total, itemCount };
+      const estado = (p as any).estado ?? (det as any)?.estado ?? 'PENDIENTE';
+
+      return { ...p, total, itemCount, estado } as PedidoIndice & { estado: PedidoEstado };
     });
+  }
+
+  // ===== UI helpers =====
+  estadoLabel(e?: string): string {
+    switch ((e || 'PENDIENTE') as PedidoEstado) {
+      case 'PENDIENTE':  return 'Pendiente';
+      case 'EN_COCINA':  return 'En cocina';
+      case 'LISTO':      return 'Listo';
+      case 'EN_REPARTO': return 'En reparto';
+      case 'COMPLETADO': return 'Completado';
+      case 'CANCELADO':  return 'Cancelado';
+      default:           return 'Pendiente';
+    }
+  }
+
+  estadoBadgeClass(e?: string): string {
+    switch ((e || 'PENDIENTE') as PedidoEstado) {
+      case 'PENDIENTE':  return 'bg-warning text-dark';
+      case 'EN_COCINA':  return 'bg-info text-dark';
+      case 'LISTO':      return 'bg-primary';
+      case 'EN_REPARTO': return 'bg-secondary';
+      case 'COMPLETADO': return 'bg-success';
+      case 'CANCELADO':  return 'bg-danger';
+      default:           return 'bg-warning text-dark';
+    }
+  }
+
+  estadoDe(obj: unknown): string {
+  // intenta leer "estado" y cae en 'PENDIENTE' si no existe
+  const e = (obj as any)?.estado;
+  return typeof e === 'string' && e.length ? e : 'PENDIENTE';
   }
 }

@@ -14,6 +14,7 @@ export type PedidoIndice = {
   itemCount?: number;
   opcionRetiro?: string;
   // (no agregamos estado aquí para no romper datos ya guardados)
+  estado?: PedidoEstado;
 };
 
 export type ItemPedido = {
@@ -190,4 +191,11 @@ export class PedidosService {
     if (this.bc) this.bc.postMessage('refresh');
     try { localStorage.setItem(PING_KEY, String(Date.now())); } catch {}
   }
+
+  getEstadoDe(pedidoId: string): PedidoEstado | undefined {
+  const entrada = this.obtenerIndice().find(p => p.id === pedidoId);
+  if (entrada?.estado) return entrada.estado;
+  const det = this.obtenerDetallePorId(pedidoId);
+  return det?.estado;
+}
 }

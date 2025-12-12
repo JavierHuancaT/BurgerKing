@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PedidosService } from '../pedidos.service';
-import { AuthService } from 'src/app/auth/auth.service';
 
 // ===== Tipos para pedidos =====
+export type PedidoEstado =
+  | 'PENDIENTE' | 'EN_COCINA' | 'LISTO' | 'EN_REPARTO' | 'COMPLETADO' | 'CANCELADO';
+
 export interface ItemPedido {
   nombre: string;
   precio: number;
@@ -13,51 +14,73 @@ export interface ItemPedido {
 }
 
 export interface UsuarioPedidoMeta {
-  id?: string;        // si tienes id del usuario logueado
-  nombre?: string;    // o username/email
+  id?: string;
+  nombre?: string;
   email?: string;
 }
 
 export interface Pedido {
   id: string;                 // p.ej. PED-2025-12-08T02:15:03.123Z-12345
-  fechaISO: string;           // new Date().toISOString()
+  fechaISO: string;
   usuario?: UsuarioPedidoMeta;
-  opcionRetiro?: string;      // retiro en tienda / delivery / etc
+  opcionRetiro?: string;
   items: ItemPedido[];
   subtotal: number;
   total: number;
+  estado: PedidoEstado;       // 👈 nuevo en el detalle
 }
 
-// Claves LS
+// Estructura de cada fila en el índice (bk_pedidos_index)
+type PedidoIndexRow = {
+  id: string;
+  key: string;
+  fechaISO: string;
+  usuario?: UsuarioPedidoMeta;
+  total?: number;
+  itemCount?: number;
+  opcionRetiro?: string;
+  estado?: PedidoEstado;      // 👈 nuevo en el índice
+};
+
+// Claves de LS
 const LS_CARRITO = 'carrito';
-const LS_IDX_PEDIDOS = 'bk_pedidos_index'; // array de {id,key,fechaISO,usuario?}
+const LS_IDX_PEDIDOS = 'bk_pedidos_index';
 const LS_PED_PREFIX = 'bk_pedido_';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
-  // Productos (BehaviorSubject para que componentes puedan suscribirse)
+  // Productos
   private productosSubject = new BehaviorSubject<any[]>(this.cargarDesdeLocal());
   productos$ = this.productosSubject.asObservable();
 
-  // Visible (panel desplegable)
+  // Visible (panel)
   private visibleSubject = new BehaviorSubject<boolean>(false);
   visible$ = this.visibleSubject.asObservable();
 
-  // Contador total
-  private contadorSubject = new BehaviorSubject<number>(this.calcularContador(this.productosSubject.value));
+  // Contador
+  private contadorSubject = new BehaviorSubject<number>(
+    this.calcularContador(this.productosSubject.value)
+  );
   contador$ = this.contadorSubject.asObservable();
 
   constructor() {}
 
-  // ====== API de carrito existente ======
+  // ====== API carrito ======
   agregarProducto(producto: any): void {
     const actuales = [...this.productosSubject.value];
-    const idx = actuales.findIndex(p =>
-      p.nombre === producto.nombre &&
-      JSON.stringify(p.personalizaciones || {}) === JSON.stringify(producto.personalizaciones || {}));
+    const idx = actuales.findIndex(
+      p =>
+        p.nombre === producto.nombre &&
+        JSON.stringify(p.personalizaciones || {}) ===
+          JSON.stringify(producto.personalizaciones || {})
+    );
 
-    if (idx !== -1) actuales[idx].cantidad = (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
-    else actuales.push({ ...producto, cantidad: producto.cantidad || 1 });
+    if (idx !== -1) {
+      actuales[idx].cantidad =
+        (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
+    } else {
+      actuales.push({ ...producto, cantidad: producto.cantidad || 1 });
+    }
 
     this.productosSubject.next(actuales);
     this.guardarEnLocal(actuales);
@@ -94,12 +117,12 @@ export class CarritoService {
   abrirCarrito(): void { this.visibleSubject.next(true); }
   cerrarCarrito(): void { this.visibleSubject.next(false); }
 
-  // ====== NUEVO: Confirmar pedido y persistir ======
+  // ====== Confirmar pedido y persistir ======
   /**
-   * Crea un pedido en localStorage:
-   *  - key: `bk_pedido_<id>`
-   *  - agrega entrada en `bk_pedidos_index`
-   * Devuelve { id, key }. Si el carrito está vacío, devuelve null.
+   * Crea un pedido:
+   *   - Detalle en `bk_pedido_<id>`
+   *   - Fila en `bk_pedidos_index`
+   * Devuelve { id, key } o null si el carrito está vacío.
    */
   confirmarPedido(opcionRetiro?: string, usuario?: UsuarioPedidoMeta): { id: string; key: string } | null {
     const items: ItemPedido[] = this.obtenerProductosSnapshot().map(p => ({
@@ -113,7 +136,8 @@ export class CarritoService {
     if (!items.length) return null;
 
     const subtotal = items.reduce((s, it) => s + it.precio * it.cantidad, 0);
-    const total = subtotal; // aquí podrías aplicar códigos/promos si corresponde
+    const total = subtotal; // aquí puedes aplicar cupones/promos si corresponde
+    const estadoInicial: PedidoEstado = 'PENDIENTE';
 
     const id = this.generarIdPedido();
     const key = `${LS_PED_PREFIX}${id}`;
@@ -126,10 +150,11 @@ export class CarritoService {
       opcionRetiro,
       items,
       subtotal,
-      total
+      total,
+      estado: estadoInicial, // 👈 guardamos el estado en el detalle
     };
 
-    // Guarda pedido individual
+    // Detalle
     try {
       localStorage.setItem(key, JSON.stringify(pedido));
     } catch (e) {
@@ -137,16 +162,23 @@ export class CarritoService {
       return null;
     }
 
-    // Actualiza índice
+    // Índice
     try {
       const idx = this.leerIndice();
       idx.push({
         id,
         key,
         fechaISO,
-        usuario
+        usuario,
+        total,
+        itemCount: items.length,
+        opcionRetiro,
+        estado: estadoInicial, // 👈 y también en el índice
       });
       localStorage.setItem(LS_IDX_PEDIDOS, JSON.stringify(idx));
+
+      // Opcional: notificación en la misma pestaña (para “tiempo real”)
+      window.dispatchEvent(new Event('bk-pedidos-changed'));
     } catch (e) {
       console.warn('No se pudo actualizar índice de pedidos', e);
     }
@@ -176,15 +208,15 @@ export class CarritoService {
   }
 
   private generarIdPedido(): string {
-    // Ej: PED-2025-12-08T02:15:03.123Z-48219
     const rnd = Math.floor(Math.random() * 100000);
     return `PED-${new Date().toISOString()}-${rnd}`;
-    // si quieres algo más corto: return `PED-${Date.now()}-${rnd}`
   }
 
-  private leerIndice(): Array<{id:string; key:string; fechaISO:string; usuario?:UsuarioPedidoMeta}> {
+  private leerIndice(): PedidoIndexRow[] {
     try {
-      return JSON.parse(localStorage.getItem(LS_IDX_PEDIDOS) || '[]');
-    } catch { return []; }
+      return JSON.parse(localStorage.getItem(LS_IDX_PEDIDOS) || '[]') as PedidoIndexRow[];
+    } catch {
+      return [];
+    }
   }
 }
