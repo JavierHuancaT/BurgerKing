@@ -1,68 +1,94 @@
-<div class="container py-3">
+<div class="container-fluid py-3">
   <h4 class="mb-3">Gestión de pedidos (tiempo real)</h4>
 
-  <div class="row g-3">
+  <div class="kanban">
     <!-- PENDIENTES -->
-    <div class="col-xl-3 col-lg-4">
+    <div class="col-kanban">
       <h6 class="col-title">Pendientes</h6>
       <ng-container *ngIf="pendientes$ | async as arr">
-        <section>
+        <ng-container *ngIf="arr.length; else noPendientes">
           <app-pedido-card
             *ngFor="let p of arr; trackBy: trackById"
             [pedido]="p"
             (avanzar)="avanzar(p)"
             (cambiarEstado)="setEstado(p, $event)">
           </app-pedido-card>
-        </section>
-        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+        </ng-container>
+        <ng-template #noPendientes>
+          <p class="text-muted small mb-0">Sin pedidos</p>
+        </ng-template>
       </ng-container>
     </div>
 
     <!-- EN COCINA -->
-    <div class="col-xl-3 col-lg-4">
+    <div class="col-kanban">
       <h6 class="col-title">En cocina</h6>
       <ng-container *ngIf="cocina$ | async as arr">
-        <section>
+        <ng-container *ngIf="arr.length; else noCocina">
           <app-pedido-card
             *ngFor="let p of arr; trackBy: trackById"
             [pedido]="p"
             (avanzar)="avanzar(p)"
             (cambiarEstado)="setEstado(p, $event)">
           </app-pedido-card>
-        </section>
-        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+        </ng-container>
+        <ng-template #noCocina>
+          <p class="text-muted small mb-0">Sin pedidos</p>
+        </ng-template>
       </ng-container>
     </div>
 
     <!-- LISTOS -->
-    <div class="col-xl-3 col-lg-4">
+    <div class="col-kanban">
       <h6 class="col-title">Listos</h6>
       <ng-container *ngIf="listos$ | async as arr">
-        <section>
+        <ng-container *ngIf="arr.length; else noListos">
           <app-pedido-card
             *ngFor="let p of arr; trackBy: trackById"
             [pedido]="p"
             (avanzar)="avanzar(p)"
             (cambiarEstado)="setEstado(p, $event)">
           </app-pedido-card>
-        </section>
-        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+        </ng-container>
+        <ng-template #noListos>
+          <p class="text-muted small mb-0">Sin pedidos</p>
+        </ng-template>
+      </ng-container>
+    </div>
+
+    <!-- EN REPARTO -->
+    <div class="col-kanban">
+      <h6 class="col-title">En reparto</h6>
+      <ng-container *ngIf="reparto$ | async as arr">
+        <ng-container *ngIf="arr.length; else noReparto">
+          <app-pedido-card
+            *ngFor="let p of arr; trackBy: trackById"
+            [pedido]="p"
+            (avanzar)="avanzar(p)"
+            (cambiarEstado)="setEstado(p, $event)">
+          </app-pedido-card>
+        </ng-container>
+        <ng-template #noReparto>
+          <p class="text-muted small mb-0">Sin pedidos</p>
+        </ng-template>
       </ng-container>
     </div>
 
     <!-- COMPLETADOS -->
-    <div class="col-xl-3">
+    <div class="col-kanban">
       <h6 class="col-title">Completados</h6>
       <ng-container *ngIf="done$ | async as arr">
-        <section>
+        <ng-container *ngIf="arr.length; else noDone">
           <app-pedido-card
             *ngFor="let p of arr; trackBy: trackById"
             [pedido]="p"
             (avanzar)="avanzar(p)"
             (cambiarEstado)="setEstado(p, $event)">
           </app-pedido-card>
-        </section>
-        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+        </ng-container>
+        <ng-template #noDone>
+          <p class="text-muted small mb-0">Sin pedidos</p>
+        </ng-template>
       </ng-container>
     </div>
   </div>

@@ -1,1 +1,28 @@
-.col-title{ font-weight:600; color:#6b2c0b; margin-bottom:.5rem; }
+/* Kanban 1-fila con scroll horizontal si falta espacio */
+.kanban{
+  display: flex;
+  gap: 12px;              /* espacio entre columnas */
+  align-items: flex-start;
+  overflow-x: auto;       /* habilita scroll horizontal */
+  padding-bottom: 6px;    /* aire para que no tape la barra de scroll */
+  scroll-snap-type: x proximity; /* suave al desplazar (opcional) */
+}
+
+/* Cada columna es un “panel” fijo en ancho mínimo */
+.col-kanban{
+  flex: 0 0 260px;        /* ancho de columna */
+  min-width: 260px;
+  scroll-snap-align: start; /* opcional, encaja al deslizar */
+}
+
+/* Títulos de columna */
+.col-title{
+  margin: 0 0 .5rem 0;
+  font-weight: 600;
+}
+
+/* Separación vertical entre tarjetas dentro de cada columna */
+.col-kanban app-pedido-card{
+  display: block;
+  margin-bottom: .75rem;
+}

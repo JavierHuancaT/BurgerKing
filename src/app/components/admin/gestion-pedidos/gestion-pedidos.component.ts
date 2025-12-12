@@ -15,6 +15,7 @@ export class GestionPedidosComponent implements OnDestroy {
   pendientes$!: Observable<PedidoDetalle[]>;
   cocina$!: Observable<PedidoDetalle[]>;
   listos$!: Observable<PedidoDetalle[]>;
+  reparto$   : Observable<PedidoDetalle[]> 
   done$!: Observable<PedidoDetalle[]>;
   private sub?: Subscription;
 
@@ -22,13 +23,14 @@ export class GestionPedidosComponent implements OnDestroy {
     this.pendientes$ = this.pedidos.byEstado$('PENDIENTE');
     this.cocina$     = this.pedidos.byEstado$('EN_COCINA');
     this.listos$     = this.pedidos.byEstado$('LISTO');
+    this.reparto$ = this.pedidos.byEstado$('EN_REPARTO');
     this.done$       = this.pedidos.byEstado$('COMPLETADO');
   }
 
   trackById = (_: number, p: PedidoDetalle) => p.id;
 
   avanzar(p: PedidoDetalle) {
-    const flow: PedidoEstado[] = ['PENDIENTE','EN_COCINA','LISTO','COMPLETADO'];
+    const flow: PedidoEstado[] = ['PENDIENTE','EN_COCINA','LISTO','EN_REPARTO', 'COMPLETADO'];
     const i = flow.indexOf(p.estado as PedidoEstado);
     const next = flow[Math.min(Math.max(i,0)+1, flow.length-1)];
     this.pedidos.actualizarEstado(p.id, next);
