@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { PedidosService } from '../pedidos.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 // ===== Tipos para pedidos =====
 export interface ItemPedido {

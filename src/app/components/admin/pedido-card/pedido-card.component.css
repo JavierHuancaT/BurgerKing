@@ -1,0 +1,56 @@
+.card{ border-radius:.75rem; }
+
+:host {
+  display: block;
+}
+
+.card {
+  height: 100%;
+}
+
+.card-body {
+  /* Empuja el bloque de estado/btn al fondo */
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.estado-row {
+  /* fila del precio + select + botón */
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* Que el select no se estire de más */
+.estado-row .form-select {
+  min-width: 160px;
+}
+
+.col-title { margin-bottom: .5rem; }
+app-pedido-card { height: 100%; }
+
+:host { display:block; }
+
+.card { height: 100%; }
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  overflow: hidden; /* evita que algo “se salga” por padding */
+}
+
+/* Fila final (precio + select + botón) al interior de la card */
+.estado-row {
+  margin-top: .25rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  justify-content: space-between; /* reparte bien el espacio */
+}
+
+.estado-select {
+  min-width: 160px; /* no se estira raro */
+  width: auto;
+}

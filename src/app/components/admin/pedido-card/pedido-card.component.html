@@ -1,0 +1,31 @@
+<div class="card mb-2 shadow-sm">
+  <div class="card-body">
+    <strong class="d-block"># {{ pedido.id }}</strong>
+    <small class="text-muted d-block">{{ pedido.fechaISO | date:'short' }}</small>
+
+    <div class="small text-muted mt-1">
+      {{ pedido.usuario?.nombre || '—' }} · {{ pedido.usuario?.email || '—' }}
+    </div>
+
+    <ul class="small my-2">
+      <li *ngFor="let it of pedido.items">
+        {{ it.nombre }} ×{{ it.cantidad }}
+      </li>
+    </ul>
+
+    <!-- Bloque inferior pegado al fondo de la card -->
+    <div class="estado-row">
+      <span class="badge bg-warning text-dark">{{ totalFmt(pedido.total) }}</span>
+
+      <select class="form-select form-select-sm estado-select"
+              [value]="pedido.estado"
+              (change)="onEstadoChange($event)">
+        <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+      </select>
+
+      <button class="btn btn-sm btn-outline-primary" (click)="avanzar.emit()">
+        Avanzar
+      </button>
+    </div>
+  </div>
+</div>

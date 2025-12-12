@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PedidosService } from 'src/app/services/pedidos.service';
 
 @Component({
   selector: 'app-carrito',
@@ -19,7 +20,8 @@ export class CarritoComponent implements OnInit, OnDestroy {
 
   constructor(
     private carritoService: CarritoService,
-    private auth: AuthService
+    private authService: AuthService,
+    private pedidosService: PedidosService,
   ) {}
 
   ngOnInit(): void {
@@ -67,22 +69,24 @@ export class CarritoComponent implements OnInit, OnDestroy {
 
   // Finalizar compra → crea un pedido en localStorage con su propia KEY
   finalizarCompra(): void {
-    // Toma el usuario actual (si hay sesión) y lo mapea a la metadata del pedido
-    const u = this.auth.getCurrentUser();
-    const usuarioMeta = u ? { id: u.id, nombre: u.name, email: u.email } : undefined;
+    const user = this.authService.getCurrentUser();
+    if (!user) { alert('Debes iniciar sesión.'); return; }
 
-    const result = this.carritoService.confirmarPedido(
-      this.opcionRetiro,     // retiro en tienda / delivery (según tu componente hijo)
-      usuarioMeta            // opcional: si no hay login, va undefined
-    );
+    const items = this.productos.map(p => ({
+      nombre: p.nombre,
+      precio: p.precio,        // 👈 ya viene con promo si el catálogo lo pasó así
+      cantidad: p.cantidad,
+      imagen: p.imagen
+    }));
 
-    if (!result) {
-      alert('Tu carrito está vacío.');
-      return;
+    try {
+      this.pedidosService.crearPedido(items, this.opcionRetiro);
+      alert('Pedido enviado. ¡Gracias por comprar en Burger King!');
+    } catch (e) {
+      console.error(e);
+      alert('No se pudo crear el pedido.');
     }
 
-    // Feedback + limpieza de carrito
-    alert(`Pedido enviado ✅\nCódigo: ${result.id}`);
     this.carritoService.vaciarCarrito();
     this.carritoService.cerrarCarrito();
   }

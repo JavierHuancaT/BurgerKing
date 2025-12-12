@@ -1,0 +1,69 @@
+<div class="container py-3">
+  <h4 class="mb-3">Gestión de pedidos (tiempo real)</h4>
+
+  <div class="row g-3">
+    <!-- PENDIENTES -->
+    <div class="col-xl-3 col-lg-4">
+      <h6 class="col-title">Pendientes</h6>
+      <ng-container *ngIf="pendientes$ | async as arr">
+        <section>
+          <app-pedido-card
+            *ngFor="let p of arr; trackBy: trackById"
+            [pedido]="p"
+            (avanzar)="avanzar(p)"
+            (cambiarEstado)="setEstado(p, $event)">
+          </app-pedido-card>
+        </section>
+        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+      </ng-container>
+    </div>
+
+    <!-- EN COCINA -->
+    <div class="col-xl-3 col-lg-4">
+      <h6 class="col-title">En cocina</h6>
+      <ng-container *ngIf="cocina$ | async as arr">
+        <section>
+          <app-pedido-card
+            *ngFor="let p of arr; trackBy: trackById"
+            [pedido]="p"
+            (avanzar)="avanzar(p)"
+            (cambiarEstado)="setEstado(p, $event)">
+          </app-pedido-card>
+        </section>
+        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+      </ng-container>
+    </div>
+
+    <!-- LISTOS -->
+    <div class="col-xl-3 col-lg-4">
+      <h6 class="col-title">Listos</h6>
+      <ng-container *ngIf="listos$ | async as arr">
+        <section>
+          <app-pedido-card
+            *ngFor="let p of arr; trackBy: trackById"
+            [pedido]="p"
+            (avanzar)="avanzar(p)"
+            (cambiarEstado)="setEstado(p, $event)">
+          </app-pedido-card>
+        </section>
+        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+      </ng-container>
+    </div>
+
+    <!-- COMPLETADOS -->
+    <div class="col-xl-3">
+      <h6 class="col-title">Completados</h6>
+      <ng-container *ngIf="done$ | async as arr">
+        <section>
+          <app-pedido-card
+            *ngFor="let p of arr; trackBy: trackById"
+            [pedido]="p"
+            (avanzar)="avanzar(p)"
+            (cambiarEstado)="setEstado(p, $event)">
+          </app-pedido-card>
+        </section>
+        <p class="text-muted small" *ngIf="arr.length === 0">Sin pedidos</p>
+      </ng-container>
+    </div>
+  </div>
+</div>

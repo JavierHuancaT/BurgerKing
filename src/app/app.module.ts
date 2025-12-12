@@ -18,6 +18,8 @@ import { CatalogoComponent } from './components/catalogo/catalogo.component';
 import { PromocionesComponent } from './components/admin/promociones/promociones.component';
 import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
+import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
+import { PedidoCardComponent } from './components/admin/pedido-card/pedido-card.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { PerfilComponent } from './components/perfil/perfil.component';
     CatalogoComponent,
     PromocionesComponent,
     GestionStockComponent,
-    PerfilComponent
+    PerfilComponent,
+    GestionPedidosComponent,
+    PedidoCardComponent
   ],
   imports: [
     BrowserModule,

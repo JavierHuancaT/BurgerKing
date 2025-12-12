@@ -14,6 +14,7 @@ import { PromocionesComponent } from './components/admin/promociones/promociones
 import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { ClienteGuard } from './guards/cliente.guard';
+import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
@@ -56,6 +57,7 @@ const routes: Routes = [
       { path: 'products/:id/edit', component: ProductFormComponent },
       { path: 'promotions', component: PromocionesComponent },
       { path: 'stock', component: GestionStockComponent },
+      { path: 'orders', component: GestionPedidosComponent } 
     ]
   },
 
