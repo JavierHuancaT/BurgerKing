@@ -22,10 +22,6 @@
               (change)="onEstadoChange($event)">
         <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
       </select>
-
-      <button class="btn btn-sm btn-outline-primary" (click)="avanzar.emit()">
-        Avanzar
-      </button>
     </div>
   </div>
 </div>
