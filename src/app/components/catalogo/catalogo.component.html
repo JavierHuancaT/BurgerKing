@@ -1,57 +1,42 @@
 <div class="catalogo-container">
 
-  <!-- Categorías (dinámicas, derivadas de ProductService) -->
-  <div class="categorias" *ngIf="(categorias$ | async) as categorias">
-    <button
-      *ngFor="let cat of categorias"
-      [class.activo]="cat === categoriaSeleccionada"
-      (click)="seleccionarCategoria(cat)">
+  <div class="categorias">
+    <button *ngFor="let cat of (categorias$ | async) || []"
+            [class.activo]="cat === categoriaSeleccionada"
+            (click)="seleccionarCategoria(cat)">
       {{ cat }}
     </button>
   </div>
 
-  <!-- Título -->
-  <h2 class="titulo-categoria">
-    {{ categoriaSeleccionada || 'Sin productos' }}
-  </h2>
+  <h2 class="titulo-categoria">{{ categoriaSeleccionada }}</h2>
 
-  <!-- Grid de productos -->
-  <div class="grid-productos" *ngIf="(productosPorCategoria$ | async) as mapa">
-    <ng-container *ngIf="categoriaSeleccionada && mapa[categoriaSeleccionada]?.length; else vacio">
-      <div class="producto-card" *ngFor="let producto of mapa[categoriaSeleccionada]">
-        <img
-          [src]="producto.imagen || 'assets/placeholder-product.png'"
-          [alt]="'Imagen de ' + producto.nombre"/>
+  <div class="grid-productos" *ngIf="(productosPorCategoria$ | async) as map">
+    <div class="producto-card" *ngFor="let producto of map[categoriaSeleccionada || '']">
 
-        <h3>{{ producto.nombre }}</h3>
+      <div class="promo-badge" *ngIf="producto.descuento > 0">-{{ producto.descuento }}%</div>
 
-        <p class="descripcion-producto" *ngIf="producto.descripcion">
-          {{ producto.descripcion }}
-        </p>
+      <img [src]="producto.imagen" [alt]="producto.nombre"/>
+      <h3>{{ producto.nombre }}</h3>
+      <p class="descripcion-producto">{{ producto.descripcion }}</p>
 
-        <p class="precio-producto">
-          ${{ producto.precio | number:'1.0-0' }}
-        </p>
+      <p class="precio-producto">
+        <span *ngIf="producto.descuento > 0" class="tachado">
+          {{ producto.precio | currency:'CLP':'symbol':'1.0-0' }}
+        </span>
+        <strong>
+          {{ producto.precioOferta | currency:'CLP':'symbol':'1.0-0' }}
+        </strong>
+      </p>
 
-        <!-- Selector de cantidad -->
-        <div class="selector-cantidad">
-          <button (click)="cambiarCantidad(producto.id, -1); $event.stopPropagation()">−</button>
-          <span>{{ cantidadDe(producto.id) }}</span>
-          <button (click)="cambiarCantidad(producto.id, 1);  $event.stopPropagation()">+</button>
-        </div>
-
-        <!-- Agregar al carrito -->
-        <button class="btn-agregar"
-                (click)="agregarAlCarrito(producto); $event.stopPropagation()">
-          Agregar al carrito
-        </button>
+      <div class="selector-cantidad">
+        <button (click)="cambiarCantidad(producto.id, -1); $event.stopPropagation()">−</button>
+        <span>{{ cantidadDe(producto.id) }}</span>
+        <button (click)="cambiarCantidad(producto.id, 1);  $event.stopPropagation()">+</button>
       </div>
-    </ng-container>
 
-    <ng-template #vacio>
-      <div class="text-muted" style="padding:1rem;">
-        No hay productos para mostrar. Crea productos desde <strong>Admin → Productos</strong>.
-      </div>
-    </ng-template>
+      <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
+        Agregar al carrito
+      </button>
+    </div>
   </div>
 </div>

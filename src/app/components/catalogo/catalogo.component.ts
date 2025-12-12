@@ -1,15 +1,19 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, map, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, map, Subscription, combineLatest } from 'rxjs';
 import { ProductService, Product } from 'src/app/services/product.service';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
+import { PromocionService } from 'src/app/services/promocion.service';
 
 type ProductoVM = {
   id: string;
   nombre: string;
   imagen?: string;
   descripcion?: string;
-  precio: number;
+  precio: number;           // precio base
   categoria: string;
+  // Promoción
+  precioOferta: number;     // precio que se mostrará/usa en carrito
+  descuento: number;        // porcentaje aplicado (0 si no hay)
 };
 
 @Component({
@@ -20,80 +24,66 @@ type ProductoVM = {
 export class CatalogoComponent implements OnInit, OnDestroy {
   constructor(
     private carritoService: CarritoService,
-    private productSrv: ProductService
+    private productSrv: ProductService,
+    private promoSrv: PromocionService
   ) {}
 
-  // Orden deseado de categorías
-  private ordenCategorias = [
-    'Combos de Carne',
-    'Combos de Pollo',
-    'Bebidas',
-    'Snacks',
-    'Postres'
-  ];
-  private idxCat = (cat: string) => {
-    const i = this.ordenCategorias.indexOf(cat);
-    return i === -1 ? Number.POSITIVE_INFINITY : i;
-  };
-
-  // Estado de selección en la UI
   categoriaSeleccionada: string | null = null;
-
-  // Cantidades elegidas por el usuario (id → cantidad)
   private cantidades = new Map<string, number>();
+  private sub?: Subscription;
 
-  // Categorías derivadas de los productos (ordenadas según preferencia)
+  // Categorías derivadas SOLO de productos (está bien así)
   categorias$: Observable<string[]> = this.productSrv.items$.pipe(
     map((items: Product[]) => {
       const set = new Set<string>();
       for (const p of items) set.add(this.getCategoria(p));
-      return Array.from(set).sort((a, b) => {
-        const ia = this.idxCat(a), ib = this.idxCat(b);
-        return ia === ib ? a.localeCompare(b) : ia - ib;
-      });
+
+      const orden = ['Combos de Carne','Combos de Pollo','Bebidas','Snacks','Postres','Otros'];
+      const list = Array.from(set);
+      list.sort((a,b) => (orden.indexOf(a) > -1 ? orden.indexOf(a) : 999)
+                       - (orden.indexOf(b) > -1 ? orden.indexOf(b) : 999)
+                       || a.localeCompare(b));
+      return list;
     })
   );
 
-  // Mapa {categoria: ProductoVM[]} para render
-  productosPorCategoria$: Observable<Record<string, ProductoVM[]>> = this.productSrv.items$.pipe(
-    map((items: Product[]) => {
-      const mapa: Record<string, ProductoVM[]> = {};
-      for (const p of items) {
-        const cat = this.getCategoria(p);
-        (mapa[cat] ||= []).push({
-          id: p.id,
-          nombre: p.name,
-          imagen: p.imageData,
-          // compatibilidad: usa 'descripcion' si existe, si no 'description'
-          descripcion: (p as any).descripcion ?? (p as any).description,
-          precio: p.basePrice,
-          categoria: cat
-        });
-      }
-      // orden simple por nombre dentro de cada categoría
-      Object.values(mapa).forEach(arr => arr.sort((a, b) => a.nombre.localeCompare(b.nombre)));
-      return mapa;
-    })
-  );
+  // 🔴 Antes dependía solo de products; ahora depende de products + promos
+  productosPorCategoria$: Observable<Record<string, ProductoVM[]>> =
+    combineLatest([this.productSrv.items$, this.promoSrv.items$]).pipe(
+      map(([items]) => {
+        const mapa: Record<string, ProductoVM[]> = {};
+        for (const p of items) {
+          const cat = this.getCategoria(p);
+          const { precioOferta, descuento } =
+            this.promoSrv.precioConPromo(p.basePrice, p.id);
 
-  private sub?: Subscription;
+          (mapa[cat] ||= []).push({
+            id: p.id,
+            nombre: p.name,
+            imagen: p.imageData,
+            descripcion: p.descripcion,
+            precio: p.basePrice,
+            categoria: cat,
+            precioOferta,
+            descuento
+          });
+        }
+        Object.values(mapa).forEach(arr => arr.sort((a, b) => a.nombre.localeCompare(b.nombre)));
+        return mapa;
+      })
+    );
 
   ngOnInit(): void {
-    // Selecciona la primera categoría disponible según el orden preferido
     this.sub = this.categorias$.subscribe(cats => {
-      if (!cats?.length) {
-        this.categoriaSeleccionada = null;
-        return;
-      }
+      if (!cats?.length) { this.categoriaSeleccionada = null; return; }
       if (!this.categoriaSeleccionada || !cats.includes(this.categoriaSeleccionada)) {
-        this.categoriaSeleccionada = cats[0]; // ya viene ordenado
+        this.categoriaSeleccionada = cats[0];
       }
     });
   }
-
   ngOnDestroy(): void { this.sub?.unsubscribe(); }
 
-  // Helpers de UI
+  // Helpers UI
   seleccionarCategoria(cat: string) { this.categoriaSeleccionada = cat; }
   cantidadDe(id: string): number { return this.cantidades.get(id) ?? 1; }
   cambiarCantidad(id: string, delta: number) {
@@ -102,20 +92,19 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   }
 
   agregarAlCarrito(prod: ProductoVM) {
+    // Revalida el precio por si cambió la promo justo ahora
+    const latest = this.promoSrv.precioConPromo(prod.precio, prod.id);
     this.carritoService.agregarProducto({
-      nombre: prod.nombre,
-      imagen: prod.imagen,
-      precio: prod.precio,
+      nombre:  prod.nombre,
+      imagen:  prod.imagen,
+      precio:  latest.precioOferta,
       cantidad: this.cantidadDe(prod.id)
     });
-    // Resetea cantidad del item a 1
     this.cantidades.set(prod.id, 1);
     this.carritoService.abrirCarrito();
   }
 
   private getCategoria(p: Product): string {
-    // compatibilidad: usa 'categoria' si existe, si no 'category'
-    const cat = (p as any).categoria ?? (p as any).category;
-    return (typeof cat === 'string' && cat.trim()) ? cat.trim() : 'Otros';
+    return (p.categoria && p.categoria.trim()) ? p.categoria.trim() : 'Otros';
   }
 }

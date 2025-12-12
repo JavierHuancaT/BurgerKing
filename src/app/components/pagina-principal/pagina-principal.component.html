@@ -9,21 +9,32 @@
     <ng-container *ngIf="(combos$ | async) as combos; else empty">
       <div class="combo-wrapper" *ngFor="let combo of combos; trackBy: trackById">
         <div class="combo-card">
-          <!-- Imagen (si no hay imageData, podrías poner un placeholder en assets) -->
+
+          <!-- Badge de promo -->
+          <div class="promo-badge" *ngIf="combo.descuento > 0">-{{ combo.descuento }}%</div>
+
+          <!-- Imagen -->
           <img
             [src]="combo.imagen || 'assets/placeholder-product.png'"
             [alt]="'Imagen de ' + combo.nombre"
             class="combo-img"
-          >
+          />
+
           <h5>{{ combo.nombre }}</h5>
 
-          <!-- Descripción opcional -->
+          <!-- Descripción -->
           <p class="combo-description" *ngIf="combo.descripcion">{{ combo.descripcion }}</p>
 
-          <!-- Precio formateado (si no tienes CLP registrado, usa number simple) -->
+          <!-- Precio con promo -->
           <p class="combo-price">
-            ${{ combo.precio | number:'1.0-0' }}
+            <span *ngIf="combo.descuento > 0" class="tachado">
+              {{ combo.precio | currency:'CLP':'symbol':'1.0-0' }}
+            </span>
+            <strong>
+              {{ combo.precioOferta | currency:'CLP':'symbol':'1.0-0' }}
+            </strong>
           </p>
+
         </div>
       </div>
     </ng-container>
