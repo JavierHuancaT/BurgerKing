@@ -1,23 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+// COMPONENTES PRINCIPALES
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
 import { RegisterUserComponent } from './components/register-user/register-user.component';
 import { CarritoComponent } from './components/carrito/carrito.component';
+import { CatalogoComponent } from './components/catalogo/catalogo.component';
+import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
+import { PerfilComponent } from './components/perfil/perfil.component';
+import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component'; 
+
+// COMPONENTES ADMIN
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { ProductListComponent } from './components/admin/product-list/product-list.component';
 import { ProductFormComponent } from './components/admin/product-form/product-form.component';
-import { AdminGuard } from './guards/admin.guard';
-import { CatalogoComponent } from './components/catalogo/catalogo.component';
-
-import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 import { PromocionesComponent } from './components/admin/promociones/promociones.component';
 import { GestionStockComponent } from './components/admin/gestion-stock/gestion-stock.component';
-import { PerfilComponent } from './components/perfil/perfil.component';
-import { ClienteGuard } from './guards/cliente.guard';
 import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
-import { NoAuthGuard } from './guards/no-auth.guard';
 
-import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component';
+// GUARDS
+import { AdminGuard } from './guards/admin.guard';
+import { ClienteGuard } from './guards/cliente.guard';
+import { NoAuthGuard } from './guards/no-auth.guard';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
@@ -38,6 +42,7 @@ const routes: Routes = [
     component: RegisterUserComponent, // ...mostrará el componente de registro.
     canActivate: [NoAuthGuard]
   },
+  
   { path: 'carrito', component: CarritoComponent },
   { path: 'personalizar/:id', component: GestionPersonalizacionClienteComponent },
 
