@@ -15,6 +15,7 @@ import { GestionStockComponent } from './components/admin/gestion-stock/gestion-
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { ClienteGuard } from './guards/cliente.guard';
 import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
+import { NoAuthGuard } from './guards/no-auth.guard';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
@@ -32,7 +33,8 @@ const routes: Routes = [
   // --- NUEVA RUTA PARA EL REGISTRO ---
   {
     path: 'registro', // Cuando la URL sea /registro...
-    component: RegisterUserComponent // ...mostrará el componente de registro.
+    component: RegisterUserComponent, // ...mostrará el componente de registro.
+    canActivate: [NoAuthGuard]
   },
   { path: 'carrito', component: CarritoComponent },
   { path: 'personalizacion/:id', component: PersonalizacionComponent },
