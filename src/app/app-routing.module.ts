@@ -16,6 +16,8 @@ import { PerfilComponent } from './components/perfil/perfil.component';
 import { ClienteGuard } from './guards/cliente.guard';
 import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
 
+import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component';
+
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
 
@@ -35,7 +37,7 @@ const routes: Routes = [
     component: RegisterUserComponent // ...mostrará el componente de registro.
   },
   { path: 'carrito', component: CarritoComponent },
-  { path: 'personalizacion/:id', component: PersonalizacionComponent },
+  { path: 'personalizar/:id', component: GestionPersonalizacionClienteComponent },
 
   { path: 'catalogo', component: CatalogoComponent },
   
