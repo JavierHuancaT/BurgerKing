@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, map, Subscription, combineLatest } from 'rxjs';
-import { ProductService, Product } from 'src/app/services/product.service';
+import { ProductService } from 'src/app/services/product.service';
+import { Product } from 'src/app/models/product.model';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 import { PromocionService } from 'src/app/services/promocion.service';
 
@@ -14,6 +15,7 @@ type ProductoVM = {
   // Promoción
   precioOferta: number;     // precio que se mostrará/usa en carrito
   descuento: number;        // porcentaje aplicado (0 si no hay)
+  personalizaciones?: any[]; // ← Agregado para que el HTML no falle
 };
 
 @Component({
@@ -22,34 +24,36 @@ type ProductoVM = {
   styleUrls: ['./catalogo.component.css']
 })
 export class CatalogoComponent implements OnInit, OnDestroy {
-  constructor(
-    private carritoService: CarritoService,
-    private productSrv: ProductService,
-    private promoSrv: PromocionService
-  ) {}
-
+  
   categoriaSeleccionada: string | null = null;
   private cantidades = new Map<string, number>();
   private sub?: Subscription;
 
-  // Categorías derivadas SOLO de productos (está bien así)
-  categorias$: Observable<string[]> = this.productSrv.items$.pipe(
-    map((items: Product[]) => {
-      const set = new Set<string>();
-      for (const p of items) set.add(this.getCategoria(p));
+  categorias$: Observable<string[]>;
+  productosPorCategoria$: Observable<Record<string, ProductoVM[]>>;
 
-      const orden = ['Combos de Carne','Combos de Pollo','Bebidas','Snacks','Postres','Otros'];
-      const list = Array.from(set);
-      list.sort((a,b) => (orden.indexOf(a) > -1 ? orden.indexOf(a) : 999)
-                       - (orden.indexOf(b) > -1 ? orden.indexOf(b) : 999)
-                       || a.localeCompare(b));
-      return list;
-    })
-  );
+  constructor(
+    private carritoService: CarritoService,
+    private productSrv: ProductService,
+    private promoSrv: PromocionService
+  ) {
+    // 1. Inicialización movida al constructor
+    this.categorias$ = this.productSrv.items$.pipe(
+      map((items: Product[]) => {
+        const set = new Set<string>();
+        for (const p of items) set.add(this.getCategoria(p));
 
-  // 🔴 Antes dependía solo de products; ahora depende de products + promos
-  productosPorCategoria$: Observable<Record<string, ProductoVM[]>> =
-    combineLatest([this.productSrv.items$, this.promoSrv.items$]).pipe(
+        const orden = ['Combos de Carne','Combos de Pollo','Bebidas','Snacks','Postres','Otros'];
+        const list = Array.from(set);
+        list.sort((a,b) => (orden.indexOf(a) > -1 ? orden.indexOf(a) : 999)
+                         - (orden.indexOf(b) > -1 ? orden.indexOf(b) : 999)
+                         || a.localeCompare(b));
+        return list;
+      })
+    );
+
+    // 2. Mapeo corregido para incluir personalizaciones
+    this.productosPorCategoria$ = combineLatest([this.productSrv.items$, this.promoSrv.items$]).pipe(
       map(([items]) => {
         const mapa: Record<string, ProductoVM[]> = {};
         for (const p of items) {
@@ -65,13 +69,15 @@ export class CatalogoComponent implements OnInit, OnDestroy {
             precio: p.basePrice,
             categoria: cat,
             precioOferta,
-            descuento
+            descuento,
+            personalizaciones: p.personalizaciones // ← Importante para el HTML
           });
         }
         Object.values(mapa).forEach(arr => arr.sort((a, b) => a.nombre.localeCompare(b.nombre)));
         return mapa;
       })
     );
+  }
 
   ngOnInit(): void {
     this.sub = this.categorias$.subscribe(cats => {

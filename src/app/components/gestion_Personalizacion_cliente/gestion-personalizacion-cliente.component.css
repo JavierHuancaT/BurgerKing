@@ -1,0 +1,74 @@
+.personalizacion-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fdfdfd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-header {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-info h1 {
+  color: var(--bk-brown);
+  margin-top: 0;
+}
+
+.personalizaciones-title {
+  color: var(--bk-orange);
+  margin-bottom: 1rem;
+}
+
+.personalizaciones-list {
+  margin-bottom: 2rem;
+}
+
+.personalizacion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.personalizacion-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.total-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.total-section h3 {
+  color: var(--bk-brown);
+  font-size: 1.5rem;
+}
+
+.btn-agregar {
+  background-color: var(--bk-green);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}

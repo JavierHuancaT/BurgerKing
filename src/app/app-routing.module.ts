@@ -17,6 +17,8 @@ import { ClienteGuard } from './guards/cliente.guard';
 import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
 import { NoAuthGuard } from './guards/no-auth.guard';
 
+import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component';
+
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pagina-principal' },
 
@@ -37,7 +39,7 @@ const routes: Routes = [
     canActivate: [NoAuthGuard]
   },
   { path: 'carrito', component: CarritoComponent },
-  { path: 'personalizacion/:id', component: PersonalizacionComponent },
+  { path: 'personalizar/:id', component: GestionPersonalizacionClienteComponent },
 
   { path: 'catalogo', component: CatalogoComponent },
   

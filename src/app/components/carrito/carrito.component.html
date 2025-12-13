@@ -27,6 +27,13 @@
               <span class="qty">x{{ p.cantidad }}</span>
               <span class="price">{{ (p.precio * p.cantidad) | currency:'CLP':'symbol':'1.0-0' }}</span>
             </div>
+            <div class="item-personalizaciones" *ngIf="p.personalizaciones && p.personalizaciones.length > 0">
+              <ul>
+                <li *ngFor="let personalizacion of p.personalizaciones">
+                  {{ personalizacion.nombre }} (+{{ personalizacion.precio | currency:'CLP':'symbol':'1.0-0' }})
+                </li>
+              </ul>
+            </div>
           </div>
           <button class="remove" (click)="eliminarProducto(i)">✕</button>
         </div>

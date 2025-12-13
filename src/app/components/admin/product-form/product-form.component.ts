@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 
@@ -12,13 +12,7 @@ export class ProductFormComponent implements OnInit {
 
   categorias: string[] = ['Combos de Carne', 'Combos de Pollo', 'Snacks', 'Postres', 'Bebidas', 'Otros'];
 
-  form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(80)]],
-    basePrice: [0, [Validators.required, Validators.min(0)]],
-    stock: [0, [Validators.required, Validators.min(0)]],
-    descripcion: ['', [Validators.maxLength(200)]],
-    categoria: ['Otros', [Validators.required]]
-  });
+  form!: FormGroup;
 
   editId: string | null = null;
   previewData: string | null = null; // ← Data URL para preview/guardar
@@ -28,22 +22,44 @@ export class ProductFormComponent implements OnInit {
     private srv: ProductService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(80)]],
+      basePrice: [0, [Validators.required, Validators.min(0)]],
+      stock: [0, [Validators.required, Validators.min(0)]],
+      descripcion: ['', [Validators.maxLength(200)]],
+      categoria: ['Otros', [Validators.required]],
+      personalizaciones: this.fb.array([])
+    });
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+
     if (id) {
       const p = this.srv.findById(id);
       if (!p) { this.router.navigate(['/admin/products']); return; }
       this.editId = id;
+
       this.form.patchValue({
         name: p.name,
         basePrice: p.basePrice,
         stock: p.stock,
         descripcion: p.descripcion,
-        categoria: (p.categoria && p.categoria.trim()) ? p.categoria : 'Otros'
+        categoria: (p.categoria && p.categoria.trim()) ? p.categoria : 'Otros',
       });
-      this.previewData = p.imageData ?? null;  // ← muestra imagen existente
+
+      if (p.personalizaciones) {
+        const personalizacionesArray = this.form.get('personalizaciones') as FormArray;
+        p.personalizaciones.forEach(pers => {
+          personalizacionesArray.push(this.fb.group({
+            nombre: [pers.nombre, Validators.required],
+            precio: [pers.precio, [Validators.required, Validators.min(0)]]
+          }));
+        });
+      }
+
+      this.previewData = p.imageData ?? null;
     }
   }
 
@@ -71,20 +87,22 @@ export class ProductFormComponent implements OnInit {
 
   async save(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const { name, basePrice, stock, descripcion, categoria } = this.form.value;
+    const { name, basePrice, stock, descripcion, categoria, personalizaciones } = this.form.value;
+
+    const productData = {
+      name: name!,
+      basePrice: Number(basePrice),
+      stock: Number(stock),
+      descripcion: descripcion!,
+      categoria: categoria!,
+      imageData: this.previewData ?? undefined,
+      personalizaciones: personalizaciones || []
+    };
 
     if (this.editId) {
-      this.srv.update(this.editId, {
-        name: name!, basePrice: Number(basePrice), stock: Number(stock), descripcion: descripcion!,
-        categoria: categoria!,
-        imageData: this.previewData ?? undefined
-      });
+      this.srv.update(this.editId, productData);
     } else {
-      this.srv.add({
-        name: name!, basePrice: Number(basePrice), stock: Number(stock), descripcion: descripcion!,
-        categoria: categoria!,
-        imageData: this.previewData ?? undefined
-      });
+      this.srv.add(productData);
     }
     this.router.navigate(['/admin/products']);
   }

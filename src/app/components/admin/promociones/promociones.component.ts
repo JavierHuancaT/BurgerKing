@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { PromocionService } from '../../../services/promocion.service';
-import { ProductService, Product } from '../../../services/product.service';
+import { ProductService } from '../../../services/product.service';
+import { Product } from '../../../models/product.model';
 import { Observable } from 'rxjs';
 import { Promocion } from 'src/app/models/promocion.module';
 
@@ -11,20 +12,25 @@ import { Promocion } from 'src/app/models/promocion.module';
   styleUrls: ['./promociones.component.css']
 })
 export class PromocionesComponent {
-  productos$: Observable<Product[]> = this.productSrv.items$;
-  promociones$: Observable<Promocion[]> = this.promoSrv.items$;
+  productos$: Observable<Product[]>;
+  promociones$: Observable<Promocion[]>;
 
-  form = this.fb.group({
-    codigo: ['', [Validators.required, Validators.maxLength(20)]],
-    descuentoPorc: [10, [Validators.required, Validators.min(1), Validators.max(100)]],
-    productosIds: this.fb.control<string[]>([])
-  });
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private promoSrv: PromocionService,
     private productSrv: ProductService
-  ) {}
+  ) {
+    this.productos$ = this.productSrv.items$;
+    this.promociones$ = this.promoSrv.items$;
+
+    this.form = this.fb.group({
+      codigo: ['', [Validators.required, Validators.maxLength(20)]],
+      descuentoPorc: [10, [Validators.required, Validators.min(1), Validators.max(100)]],
+      productosIds: this.fb.control<string[]>([])
+    });
+  }
 
   toggleProducto(id: string, checked: boolean) {
     const set = new Set(this.form.value.productosIds ?? []);

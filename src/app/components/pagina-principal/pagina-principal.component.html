@@ -7,7 +7,7 @@
 <div class="combos-container">
   <div class="combos-grid">
     <ng-container *ngIf="(combos$ | async) as combos; else empty">
-      <div class="combo-wrapper" *ngFor="let combo of combos; trackBy: trackById">
+      <div class="combo-wrapper" *ngFor="let combo of combos; trackBy: trackById" (click)="selectCombo(combo.id)">
         <div class="combo-card">
 
           <!-- Badge de promo -->
@@ -15,12 +15,12 @@
 
           <!-- Imagen -->
           <img
-            [src]="combo.imagen || 'assets/placeholder-product.png'"
-            [alt]="'Imagen de ' + combo.nombre"
+            [src]="combo.imageData || 'assets/placeholder-product.png'"
+            [alt]="'Imagen de ' + combo.name"
             class="combo-img"
           />
 
-          <h5>{{ combo.nombre }}</h5>
+          <h5>{{ combo.name }}</h5>
 
           <!-- Descripción -->
           <p class="combo-description" *ngIf="combo.descripcion">{{ combo.descripcion }}</p>
@@ -28,13 +28,22 @@
           <!-- Precio con promo -->
           <p class="combo-price">
             <span *ngIf="combo.descuento > 0" class="tachado">
-              {{ combo.precio | currency:'CLP':'symbol':'1.0-0' }}
+              {{ combo.basePrice | currency:'CLP':'symbol':'1.0-0' }}
             </span>
             <strong>
               {{ combo.precioOferta | currency:'CLP':'symbol':'1.0-0' }}
             </strong>
           </p>
 
+        </div>
+        <div class="combo-actions" *ngIf="selectedComboId === combo.id" (click)="$event.stopPropagation()">
+            <ng-container *ngIf="combo.personalizaciones && combo.personalizaciones.length > 0; else noPersonalizacion">
+                <button class="btn-personalizar" (click)="personalize(combo)">Personalizar</button>
+            </ng-container>
+            <ng-template #noPersonalizacion>
+                <button class="btn-add-to-cart" (click)="addToCart(combo)">Agregar al carrito</button>
+            </ng-template>
+            <button class="btn-edit-product" (click)="editProduct(combo)">Editar producto</button>
         </div>
       </div>
     </ng-container>
