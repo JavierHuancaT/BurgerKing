@@ -86,6 +86,7 @@
 /* Espacio individual para cada combo */
 .combo-wrapper {
   margin-bottom: 20px;
+  cursor: pointer;
 }
 
 /* Tarjeta de combo individual */
@@ -101,7 +102,7 @@
 }
 
 /* Efecto hover para tarjetas */
-.combo-card:hover {
+.combo-wrapper:hover .combo-card {
   transform: scale(1.03);
 }
 
@@ -219,3 +220,48 @@
   padding: .15rem .4rem; border-radius: .4rem; font-size: .75rem;
 }
 .combo-card { position: relative; }
+
+.combo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+.combo-actions button {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid transparent;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-add-to-cart {
+  background-color: #f57c00; /* BK orange */
+  color: white;
+}
+
+.btn-add-to-cart:hover {
+  background-color: #e67000;
+}
+
+.btn-edit-product {
+  background-color: #795548; /* BK brown */
+  color: white;
+}
+
+.btn-edit-product:hover {
+  background-color: #6a4c41;
+}
+
+.btn-personalizar {
+  background-color: #0d6efd; /* A shade of blue */
+  color: white;
+}
+
+.btn-personalizar:hover {
+  background-color: #0b5ed7;
+}

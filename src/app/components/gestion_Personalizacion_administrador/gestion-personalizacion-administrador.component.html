@@ -1,0 +1,19 @@
+<div [formGroup]="form">
+  <div formArrayName="personalizaciones">
+    <div *ngFor="let personalizacion of personalizaciones.controls; let i=index" [formGroupName]="i" class="row mb-2 align-items-center">
+      <div class="col-md-6">
+        <input type="text" class="form-control" formControlName="nombre" placeholder="Nombre (Ej: Extra Queso)">
+      </div>
+      <div class="col-md-4">
+        <input type="number" class="form-control" formControlName="precio" placeholder="Precio (Ej: 1500)">
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-danger btn-sm" (click)="quitarPersonalizacion(i)">Quitar</button>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-outline-primary btn-sm mt-2" (click)="agregarPersonalizacion()">
+    + Añadir Opción
+  </button>
+</div>

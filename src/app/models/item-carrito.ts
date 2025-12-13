@@ -1,9 +1,12 @@
+import { OpcionPersonalizacion } from "./opcion-personalizacion.model";
+
 export interface ItemCarrito {
   id: string;
   nombre: string;
   precio: number;
   cantidad: number;
-  imagenUrl?: string;
+  imagen?: string;
+  personalizaciones?: OpcionPersonalizacion[];
   opciones?: Record<string, string>;
 }
 

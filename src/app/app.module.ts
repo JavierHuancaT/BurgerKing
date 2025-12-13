@@ -20,6 +20,8 @@ import { GestionStockComponent } from './components/admin/gestion-stock/gestion-
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gestion-pedidos.component';
 import { PedidoCardComponent } from './components/admin/pedido-card/pedido-card.component';
+import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component';
+import { GestionPersonalizacionAdministradorComponent } from './components/gestion_Personalizacion_administrador/gestion-personalizacion-administrador.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { PedidoCardComponent } from './components/admin/pedido-card/pedido-card.
     GestionStockComponent,
     PerfilComponent,
     GestionPedidosComponent,
-    PedidoCardComponent
+    PedidoCardComponent,
+    GestionPersonalizacionClienteComponent,
+    GestionPersonalizacionAdministradorComponent
   ],
   imports: [
     BrowserModule,

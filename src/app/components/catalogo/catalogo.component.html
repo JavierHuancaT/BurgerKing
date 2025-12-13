@@ -34,9 +34,34 @@
         <button (click)="cambiarCantidad(producto.id, 1);  $event.stopPropagation()">+</button>
       </div>
 
-      <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
-        Agregar al carrito
-      </button>
+      <div class="botones-accion">
+        <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
+          Agregar al carrito
+        </button>
+        <a [routerLink]="['/personalizar', producto.id]" class="btn-personalizar" *ngIf="producto.personalizaciones && producto.personalizaciones.length > 0">
+          Personalizar
+        </a>
+      </div>
     </div>
   </div>
 </div>
+<style>
+  .botones-accion {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .btn-agregar, .btn-personalizar {
+    flex-grow: 1;
+  }
+  .btn-personalizar {
+    background-color: var(--bk-orange);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+  }
+</style>
