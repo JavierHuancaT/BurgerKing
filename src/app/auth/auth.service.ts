@@ -68,8 +68,15 @@ export class AuthService {
    */
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
-  constructor() { }
-
+  constructor() {
+    // --- PASO 1: RECUPERAR SESIÓN AL INICIAR ---
+    // Al recargar la página, verificamos si hay un usuario guardado.
+    const userGuardado = localStorage.getItem('currentUser'); // <--- NUEVO
+    if (userGuardado) {
+      // Si existe, lo cargamos inmediatamente en el sistema
+      this.currentUserSubject.next(JSON.parse(userGuardado)); // <--- NUEVO
+    }
+  }
   /**
    * Retorna el valor actual del usuario logueado.
    * Es un método de conveniencia para no tener que suscribirse al observable.
@@ -128,6 +135,10 @@ export class AuthService {
       // Desestructura para quitar el passwordHash del objeto de sesión.
       const { passwordHash, ...userSessionData } = userFound;
       
+      // --- PASO 2: GUARDAR SESIÓN AL LOGUEARSE ---
+      // Guardamos el usuario en el disco del navegador (LocalStorage)
+      localStorage.setItem('currentUser', JSON.stringify(userSessionData)); // <--- NUEVO
+
       // Emite el nuevo estado (usuario logueado) a todos los suscriptores.
       this.currentUserSubject.next(userSessionData);
       // Retorna el usuario (usando 'of' para crear un Observable).
@@ -144,6 +155,7 @@ export class AuthService {
    * (Cumple criterio de HDU3: "botón Cerrar Sesión").
    */
   logout(): void {
+    localStorage.removeItem('currentUser'); // <--- NUEVO
     // Emite 'null' para notificar a la app que el usuario cerró sesión.
     this.currentUserSubject.next(null);
   }
