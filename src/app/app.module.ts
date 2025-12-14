@@ -22,6 +22,7 @@ import { GestionPedidosComponent } from './components/admin/gestion-pedidos/gest
 import { PedidoCardComponent } from './components/admin/pedido-card/pedido-card.component';
 import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component';
 import { GestionPersonalizacionAdministradorComponent } from './components/gestion_Personalizacion_administrador/gestion-personalizacion-administrador.component';
+import { RestaurantesComponent } from './components/restaurantes/restaurantes.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { GestionPersonalizacionAdministradorComponent } from './components/gesti
     GestionPedidosComponent,
     PedidoCardComponent,
     GestionPersonalizacionClienteComponent,
-    GestionPersonalizacionAdministradorComponent
+    GestionPersonalizacionAdministradorComponent,
+    RestaurantesComponent
   ],
   imports: [
     BrowserModule,
