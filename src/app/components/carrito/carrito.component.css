@@ -93,12 +93,13 @@
 
 .item {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
   background: #fff8f2;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
   margin-bottom: 10px;
+  position: relative;
 }
 
 .item-img {
@@ -106,17 +107,133 @@
   height: 64px;
   object-fit: cover;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
-.item-data {
+/* Columna izquierda: Nombre + Editar + Personalizaciones */
+.item-info {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
 
 .item-name {
   font-weight: 600;
   color: #333;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+/* Botón editar */
+.btn-editar {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #d62300;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 2px 0;
+  background: none;
+  border: none;
+  width: fit-content;
+}
+
+.btn-editar:hover {
+  color: #a01800;
+}
+
+.item-personalizaciones {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.item-personalizaciones ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style: disc;
+}
+
+.item-personalizaciones li {
+  margin: 2px 0;
+}
+
+/* Columna derecha: Total arriba + Controles abajo */
+.item-precio-controles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-right: 30px;
+}
+
+/* Precio total (arriba en la columna derecha) */
+.item-precio-total {
+  font-size: 1.05rem;
+  color: #333;
+  font-weight: 700;
+}
+
+/* Control de cantidad (abajo en la columna derecha) */
+.item-cantidad-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #d62300;
+  background: white;
+  color: #d62300;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.qty-btn:hover {
+  background: #d62300;
+  color: white;
+}
+
+.qty-btn:active {
+  transform: scale(0.95);
+}
+
+.qty-display {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Botón X (esquina superior derecha) */
+.remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove:hover {
+  color: #a01800;
 }
 
 .item-meta {
@@ -125,14 +242,6 @@
   color: #666;
   margin-top: 6px;
   font-size: 0.95rem;
-}
-
-.remove {
-  background: none;
-  border: none;
-  color: #d32f2f;
-  font-size: 1rem;
-  cursor: pointer;
 }
 
 /* summary and actions */

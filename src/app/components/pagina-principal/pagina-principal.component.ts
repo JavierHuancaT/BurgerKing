@@ -57,6 +57,7 @@ export class PaginaPrincipalComponent {
   addToCart(combo: ComboConPromo) {
     const item: ItemCarrito = {
       id: crypto.randomUUID?.() ?? String(Date.now()),
+      productId: combo.id,
       nombre: combo.name,
       precio: combo.precioOferta,
       cantidad: 1,

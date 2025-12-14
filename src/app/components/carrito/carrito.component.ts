@@ -36,8 +36,6 @@ export class CarritoComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.carritoService.visible$.subscribe(v => {
         this.visible = v;
-        if (v) document.body.style.overflow = 'hidden';
-        else document.body.style.overflow = '';
       })
     );
 
@@ -51,8 +49,7 @@ export class CarritoComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
     document.body.style.overflow = '';
   }
-
-  // Abrir/cerrar desde el propio componente (X)
+// Abrir/cerrar desde el propio componente (X)
   cerrar(): void {
     this.carritoService.cerrarCarrito();
   }
@@ -65,6 +62,20 @@ export class CarritoComponent implements OnInit, OnDestroy {
   // Vaciar carrito
   vaciar(): void {
     this.carritoService.vaciarCarrito();
+  }
+
+  // Cambiar cantidad de un producto
+  cambiarCantidad(index: number, delta: number): void {
+    const producto = this.productos[index];
+    if (!producto) return;
+    
+    const nuevaCantidad = (producto.cantidad || 1) + delta;
+    this.carritoService.actualizarCantidad(index, nuevaCantidad);
+  }
+
+  // Calcular subtotal por producto
+  calcularSubtotalProducto(producto: any): number {
+    return (producto.precio || 0) * (producto.cantidad || 1);
   }
 
   // Finalizar compra → crea un pedido en localStorage con su propia KEY

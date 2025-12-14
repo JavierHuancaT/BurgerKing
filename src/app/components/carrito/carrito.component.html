@@ -20,13 +20,22 @@
     <div class="carrito-content" *ngIf="productos.length > 0">
       <div class="items-list">
         <div class="item" *ngFor="let p of productos; let i = index">
+          <!-- Imagen del producto -->
           <img [src]="p.imagen || 'assets/default_product.png'" alt="{{p.nombre}}" class="item-img" />
-          <div class="item-data">
+          
+          <!-- Columna izquierda: Nombre + Editar + Personalizaciones -->
+          <div class="item-info">
             <div class="item-name">{{ p.nombre }}</div>
-            <div class="item-meta">
-              <span class="qty">x{{ p.cantidad }}</span>
-              <span class="price">{{ (p.precio * p.cantidad) | currency:'CLP':'symbol':'1.0-0' }}</span>
-            </div>
+            
+            <!-- Botón editar (solo si tiene productId) -->
+            <a *ngIf="p.productId" 
+               [routerLink]="['/personalizar', p.productId]" 
+               class="btn-editar"
+               (click)="cerrar()">
+              Editar
+            </a>
+
+            <!-- Personalizaciones -->
             <div class="item-personalizaciones" *ngIf="p.personalizaciones && p.personalizaciones.length > 0">
               <ul>
                 <li *ngFor="let personalizacion of p.personalizaciones">
@@ -35,6 +44,23 @@
               </ul>
             </div>
           </div>
+
+          <!-- Columna derecha: Total + Controles de cantidad -->
+          <div class="item-precio-controles">
+            <!-- Precio total arriba -->
+            <div class="item-precio-total">
+              {{ calcularSubtotalProducto(p) | currency:'CLP':'symbol':'1.0-0' }}
+            </div>
+
+            <!-- Controles de cantidad abajo -->
+            <div class="item-cantidad-control">
+              <button class="qty-btn" (click)="cambiarCantidad(i, -1)">−</button>
+              <span class="qty-display">{{ p.cantidad }}</span>
+              <button class="qty-btn" (click)="cambiarCantidad(i, 1)">+</button>
+            </div>
+          </div>
+
+          <!-- Botón X para eliminar -->
           <button class="remove" (click)="eliminarProducto(i)">✕</button>
         </div>
       </div>

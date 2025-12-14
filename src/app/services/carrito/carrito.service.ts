@@ -87,6 +87,20 @@ export class CarritoService {
     this.actualizarContador(actuales);
   }
 
+  // Actualizar cantidad de un producto específico
+  actualizarCantidad(index: number, nuevaCantidad: number): void {
+    const actuales = [...this.productosSubject.value];
+    if (index >= 0 && index < actuales.length && nuevaCantidad > 0) {
+      actuales[index].cantidad = nuevaCantidad;
+      this.productosSubject.next(actuales);
+      this.guardarEnLocal(actuales);
+      this.actualizarContador(actuales);
+    } else if (nuevaCantidad <= 0) {
+      // Si la cantidad llega a 0, eliminar el producto
+      this.eliminarProducto(index);
+    }
+  }
+
   setProductos(productos: any[]): void {
     this.productosSubject.next(productos);
     this.guardarEnLocal(productos);

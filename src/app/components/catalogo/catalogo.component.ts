@@ -101,6 +101,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     // Revalida el precio por si cambió la promo justo ahora
     const latest = this.promoSrv.precioConPromo(prod.precio, prod.id);
     this.carritoService.agregarProducto({
+      productId: prod.id,
       nombre:  prod.nombre,
       imagen:  prod.imagen,
       precio:  latest.precioOferta,
