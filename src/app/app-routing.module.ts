@@ -9,6 +9,7 @@ import { CatalogoComponent } from './components/catalogo/catalogo.component';
 import { PersonalizacionComponent } from './components/personalizacion/personalizacion.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { GestionPersonalizacionClienteComponent } from './components/gestion_Personalizacion_cliente/gestion-personalizacion-cliente.component'; 
+import { RestaurantesComponent } from './components/restaurantes/restaurantes.component';
 
 // COMPONENTES ADMIN
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
@@ -48,6 +49,7 @@ const routes: Routes = [
 
   { path: 'catalogo', component: CatalogoComponent },
   
+  { path: 'restaurantes', component: RestaurantesComponent },
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)

@@ -1,0 +1,54 @@
+/* Colores de marca */
+.bg-bk {
+    background-color: #5c3d2e; /* Marrón oscuro */
+}
+.text-bk {
+    color: #5c3d2e;
+}
+
+/* Imagen de cabecera opcional */
+.header-banner {
+    background: linear-gradient(rgba(92, 61, 46, 0.9), rgba(92, 61, 46, 0.8)), url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1500&q=80');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Estilo de la tarjeta */
+.local-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.local-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* Contenedor de imagen para mantener proporciones */
+.img-container {
+    height: 200px;
+    overflow: hidden;
+}
+
+.img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.local-card:hover .img-container img {
+    transform: scale(1.1); /* Efecto zoom al pasar el mouse */
+}
+
+/* Botón personalizado */
+.btn-outline-bk {
+    color: #f57c00;
+    border-color: #f57c00;
+    font-weight: bold;
+}
+
+.btn-outline-bk:hover {
+    background-color: #f57c00;
+    color: white;
+}
