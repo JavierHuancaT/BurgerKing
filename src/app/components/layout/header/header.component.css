@@ -4,6 +4,9 @@
  * (Nav | Logo | Acciones)
  */
 .custom-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
   justify-content: space-between; /* Espacio entre los elementos */
   align-items: center; /* Centra verticalmente */
