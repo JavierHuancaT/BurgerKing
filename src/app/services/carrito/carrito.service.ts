@@ -70,6 +70,7 @@ export class CarritoService {
     const actuales = [...this.productosSubject.value];
     const idx = actuales.findIndex(
       p =>
+        p.productId === producto.productId &&
         p.nombre === producto.nombre &&
         JSON.stringify(p.personalizaciones || {}) ===
           JSON.stringify(producto.personalizaciones || {})
@@ -79,7 +80,11 @@ export class CarritoService {
       actuales[idx].cantidad =
         (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
     } else {
-      actuales.push({ ...producto, cantidad: producto.cantidad || 1 });
+      actuales.push({ 
+        ...producto, 
+        productId: producto.productId || producto.id,
+        cantidad: producto.cantidad || 1 
+      });
     }
 
     this.productosSubject.next(actuales);

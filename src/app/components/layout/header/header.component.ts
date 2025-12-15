@@ -12,6 +12,8 @@ import { CarritoService } from 'src/app/services/carrito/carrito.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   contadorCarrito = 0;
+  totalCarrito = 0;
+  currentUser: User | null = null;
   private subs: Subscription[] = [];
 
   // Observable del usuario actual (para usar con async en el template)
@@ -27,6 +29,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Suscripción al contador del carrito
     this.subs.push(
       this.carritoService.contador$.subscribe(c => this.contadorCarrito = c)
+    );
+
+    // Suscripción a los productos para calcular el total
+    this.subs.push(
+      this.carritoService.productos$.subscribe(productos => {
+        this.totalCarrito = productos.reduce((total, p) => 
+          total + ((p.precio || 0) * (p.cantidad || 1)), 0
+        );
+      })
+    );
+
+    // Suscripción al usuario actual
+    this.subs.push(
+      this.authService.currentUser$.subscribe(user => {
+        this.currentUser = user;
+      })
     );
   }
 

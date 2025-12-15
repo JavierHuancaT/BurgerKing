@@ -70,6 +70,10 @@ export class CarritoComponent implements OnInit, OnDestroy {
     if (!producto) return;
     
     const nuevaCantidad = (producto.cantidad || 1) + delta;
+    
+    // No permitir que la cantidad baje de 1
+    if (nuevaCantidad < 1) return;
+    
     this.carritoService.actualizarCantidad(index, nuevaCantidad);
   }
 
@@ -81,25 +85,33 @@ export class CarritoComponent implements OnInit, OnDestroy {
   // Finalizar compra → crea un pedido en localStorage con su propia KEY
   finalizarCompra(): void {
     const user = this.authService.getCurrentUser();
-    if (!user) { alert('Debes iniciar sesión.'); return; }
+    if (!user) { 
+      alert('Debes iniciar sesión para finalizar tu compra.'); 
+      return; 
+    }
+
+    if (!this.opcionRetiro) {
+      alert('Por favor, selecciona una opción de retiro.');
+      return;
+    }
 
     const items = this.productos.map(p => ({
       nombre: p.nombre,
-      precio: p.precio,        // 👈 ya viene con promo si el catálogo lo pasó así
+      precio: p.precio,
       cantidad: p.cantidad,
-      imagen: p.imagen
+      imagen: p.imagen,
+      personalizaciones: p.personalizaciones
     }));
 
     try {
       this.pedidosService.crearPedido(items, this.opcionRetiro);
-      alert('Pedido enviado. ¡Gracias por comprar en Burger King!');
+      alert('¡Pedido realizado con éxito! Gracias por tu compra.');
+      this.carritoService.vaciarCarrito();
+      this.carritoService.cerrarCarrito();
     } catch (e) {
       console.error(e);
-      alert('No se pudo crear el pedido.');
+      alert('No se pudo procesar tu pedido. Intenta nuevamente.');
     }
-
-    this.carritoService.vaciarCarrito();
-    this.carritoService.cerrarCarrito();
   }
 
   // Recibir la opción desde RetiroComidaComponent
