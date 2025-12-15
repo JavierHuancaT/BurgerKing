@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterUserComponent } from '../components/register-user/register-user.component';
-
+import { NoAuthGuard } from '../guards/no-auth.guard';
 /**
  * "Seguridad: Routes"
  * Se define la constante 'routes' que Angular usará para
@@ -17,12 +17,14 @@ const routes: Routes = [
     * cargará el LoginComponent en el <router-outlet>.
     */
    path: 'login', // La ruta completa será 'auth/login'
-   component: LoginComponent
+   component: LoginComponent,
+   canActivate: [NoAuthGuard]
  },
  
  {
     path: 'register',   
-    component: RegisterUserComponent
+    component: RegisterUserComponent,
+    canActivate: [NoAuthGuard]
   },
  
  {
