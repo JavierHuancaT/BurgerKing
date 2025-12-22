@@ -13,8 +13,8 @@ type PedidoEstado = 'PENDIENTE' | 'EN_COCINA' | 'LISTO' | 'EN_REPARTO' | 'COMPLE
 export class PerfilComponent implements OnInit, OnDestroy {
 
   usuario = this.auth.getCurrentUser();
-  pedidos: PedidoIndice[] = [];
-  detalleSeleccionado: PedidoDetalle | null = null;
+  pedidos: (PedidoIndice & { opcionRetiro?: string })[] = [];
+  detalleSeleccionado: (PedidoDetalle & { subtotal?: number }) | null = null;
 
   private onStorage = () => {
     // refresca la lista cuando el admin o el sistema cambien estados
@@ -45,12 +45,21 @@ export class PerfilComponent implements OnInit, OnDestroy {
     this.enriquecerTotalesYEstado();
     if (this.detalleSeleccionado) {
       // si hay un detalle abierto, recárgalo para ver estado actualizado
-      this.detalleSeleccionado = this.pedidosSrv.obtenerDetallePorId(this.detalleSeleccionado.id);
+      this.verDetalle(this.detalleSeleccionado.id);
     }
   }
 
   verDetalle(pedidoId: string) {
-    this.detalleSeleccionado = this.pedidosSrv.obtenerDetallePorId(pedidoId);
+    const d = this.pedidosSrv.obtenerDetallePorId(pedidoId);
+    if (d) {
+      // Calcular subtotal y total con envío
+      const subtotal = d.items?.reduce((s, it) => s + (it.precio || 0) * (it.cantidad || 1), 0) ?? 0;
+      const costoEnvio = d.opcionRetiro === 'Delivery' ? 2500 : 0;
+      const total = subtotal + costoEnvio;
+      this.detalleSeleccionado = { ...d, subtotal, total };
+    } else {
+      this.detalleSeleccionado = null;
+    }
   }
 
   /** Si total / itemCount faltan en el índice, los completamos leyendo el detalle.
@@ -58,7 +67,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
    */
   private enriquecerTotalesYEstado() {
     this.pedidos = this.pedidos.map(p => {
-      const det = (!p.total || !p.itemCount || (p as any).estado == null)
+      const det = (!p.total || !p.itemCount || (p as any).estado == null || !(p as any).opcionRetiro)
         ? this.pedidosSrv.obtenerDetallePorId(p.id)
         : null;
 
@@ -66,15 +75,18 @@ export class PerfilComponent implements OnInit, OnDestroy {
         ? p.itemCount
         : (det?.items?.reduce((s, it) => s + (it.cantidad || 0), 0) ?? 0);
 
-      const total = p.total && p.total > 0
-        ? p.total
-        : (typeof det?.total === 'number'
-            ? det!.total
-            : (det?.items?.reduce((s, it) => s + (it.precio || 0) * (it.cantidad || 1), 0) ?? 0));
+      const opcionRetiro = (p as any).opcionRetiro || (det as any)?.opcionRetiro;
+      const costoEnvio = opcionRetiro === 'Delivery' ? 2500 : 0;
+
+      const subtotal = (det && det.items)
+        ? det.items.reduce((s, it) => s + (it.precio || 0) * (it.cantidad || 1), 0)
+        : (p.total || 0);
+
+      const total = subtotal + costoEnvio;
 
       const estado = (p as any).estado ?? (det as any)?.estado ?? 'PENDIENTE';
 
-      return { ...p, total, itemCount, estado } as PedidoIndice & { estado: PedidoEstado };
+      return { ...p, total, itemCount, estado, opcionRetiro } as PedidoIndice & { estado: PedidoEstado, opcionRetiro?: string };
     });
   }
 

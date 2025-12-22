@@ -68,6 +68,11 @@
       <app-retiro-comida (opcionSeleccionada)="onOpcionRetiroSeleccionada($event)"></app-retiro-comida>
 
       <div class="cart-summary">
+        <div class="subtotal" *ngIf="opcionRetiro === 'Delivery'">
+          <span>Costo de envío</span>
+          <strong>{{ 2500 | currency:'CLP':'symbol':'1.0-0' }}</strong>
+        </div>
+
         <div class="subtotal">
           <span>Subtotal</span>
           <strong>{{ calcularTotal() | currency:'CLP':'symbol':'1.0-0' }}</strong>

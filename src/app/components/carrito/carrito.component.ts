@@ -121,6 +121,7 @@ export class CarritoComponent implements OnInit, OnDestroy {
 
   // Calcular total (se llama desde el template)
   calcularTotal(): number {
-    return this.productos.reduce((s, p) => s + (p.precio || 0) * (p.cantidad || 1), 0);
+    const subtotal = this.productos.reduce((s, p) => s + (p.precio || 0) * (p.cantidad || 1), 0);
+    return this.opcionRetiro === 'Delivery' ? subtotal + 2500 : subtotal;
   }
 }
