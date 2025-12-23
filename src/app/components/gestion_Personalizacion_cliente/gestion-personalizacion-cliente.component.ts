@@ -19,7 +19,7 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   totalPrice: number = 0;
 
   constructor(
-    private route: ActivatedRoute,
+    private route: ActivatedRoute, // 1. Inyectamos el servicio de rutas active
     private router: Router,
     private productService: ProductService,
     private carritoService: CarritoService,
@@ -31,8 +31,10 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // 2. COMUNICACIÓN: Capturamos el parámetro 'id' que viene en la URL
     const productId = this.route.snapshot.paramMap.get('id');
     if (productId) {
+      // 3. Usamos el dato recibido para buscar el producto
       this.product = this.productService.findById(productId);
       if (this.product) {
         this.totalPrice = this.product.basePrice;

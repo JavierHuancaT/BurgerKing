@@ -13,28 +13,28 @@ export class AuthService {
 
   // CONFIGURACIÓN DE SEGURIDAD
   private readonly HASH_KEY = 'mi-clave-secreta-bk-super-segura'; 
-  // OJO AQUÍ: He cambiado el nombre de la clave para que NO choque con la vieja
+  // Se ha cambiado el nombre de la clave para que NO choque con la vieja
   private readonly LS_SESSION_KEY = 'bk_secure_session_v2'; 
   
   private hashPassword(password: string): string {
     return CryptoJS.SHA256(password + this.HASH_KEY).toString();
   }
 
-  // BD simulada
+// En nuestra "Base de Datos", asignamos propiedades específicas a cada usuario
   private userDatabase: UserWithPassword[] = [
     { 
       id: '1', 
       email: 'admin@admin.cl', 
       passwordHash: this.hashPassword('admin123'), 
       name: 'Admin Burger', 
-      role: 'Admin' 
+      role: 'Admin' // <--- ROL DE ADMINISTRADOR (Acceso Total)
     },
     { 
       id: '2', 
       email: 'cliente@cliente.cl', 
       passwordHash: this.hashPassword('cliente123'), 
       name: 'Cliente Frecuente', 
-      role: 'Client' 
+      role: 'Client' // <--- ROL DE CLIENTE (Acceso Limitado)
     }
   ];
 
@@ -52,6 +52,7 @@ export class AuthService {
     
     if (encryptedData) {
       try {
+        // Intentamos una operación peligrosa (desencriptar)
         const bytes = CryptoJS.AES.decrypt(encryptedData, this.HASH_KEY);
         const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
         
@@ -63,8 +64,10 @@ export class AuthService {
         this.currentUserSubject.next(user);
 
       } catch (error) {
+          // SI FALLA (Datos corruptos o manipulación):
+          // RÚBRICA: "Se controlan errores sin que la aplicación quede inactiva"
         console.error('ALERTA DE SEGURIDAD: Intento de manipulación de LocalStorage detectado.');
-        this.logout();
+        this.logout(); // <-- RECUPERACIÓN: Cerramos sesión limpiamente en vez de crashear.
       }
     }
   }
@@ -72,6 +75,7 @@ export class AuthService {
   // --- MÉTODOS PÚBLICOS ---
   public getCurrentUser(): User | null { return this.currentUserSubject.value; }
   public isLoggedIn(): boolean { return this.currentUserSubject.value !== null; }
+  // Métodos auxiliares para consultar el rol en cualquier parte de la página
   public isAdmin(): boolean { return this.currentUserSubject.value?.role === 'Admin'; }
   public isClient(): boolean { return this.currentUserSubject.value?.role === 'Client'; }
 

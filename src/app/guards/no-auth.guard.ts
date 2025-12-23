@@ -19,7 +19,6 @@ export class NoAuthGuard implements CanActivate {
       }
       
       // Si es Cliente, lo mandamos al catálogo
-      // (Asegúrate que '/catalogo' sea la ruta correcta en tu app)
       return this.router.createUrlTree(['/catalogo']);
     }
 

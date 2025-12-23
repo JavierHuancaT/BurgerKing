@@ -20,8 +20,9 @@ export class LoginComponent {
   ) {}
 
   onSubmit(form: NgForm): void {
+    // Utilizamos el estado del formulario (NgForm) para validar antes de enviar.
     if (form.invalid) {
-      return;
+      return; //Si los datos no sirven, detenemos el proceso aquí.
     }
     
     this.loginError = false;

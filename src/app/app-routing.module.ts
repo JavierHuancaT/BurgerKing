@@ -55,7 +55,11 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
 
-  { path: 'perfil', component: PerfilComponent, canActivate: [ClienteGuard] },
+  {
+     path: 'perfil',
+     component: PerfilComponent, 
+     canActivate: [ClienteGuard] 
+  },
 
   {
     path: 'admin',
