@@ -17,20 +17,42 @@
 .opciones-wrapper {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
 }
 
+/* 1. Contenedor: Para que los botones no estén pegados */
+.opciones-wrapper {
+  display: flex;
+  gap: 10px;           /* Espacio entre botones */
+  margin-bottom: 1rem;
+}
+
+/* 2. Botón Base: Limpio y redondeado */
 .opciones-wrapper button {
-    padding: 12px 25px;
-    font-size: 1em;
-    border: 2px solid #d32f2f;
-    background-color: #fff;
-    color: #d32f2f;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  padding: 4px 12px;       /* Un poco más ancho a los lados */
+  font-size: 0.85em;
+  font-weight: 600;        /* Texto más gordito (semi-bold) */
+  border: 2px solid #e0e0e0; /* Borde gris suave por defecto (más elegante) */
+  background-color: #fff;
+  color: #555;             /* Texto gris oscuro */
+  cursor: pointer;
+  border-radius: 50px;     /* Borde completamente redondeado (Píldora) */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Animación fluida */
 }
 
+/* 3. Efecto Hover: Cuando pasas el mouse por encima (sin seleccionar) */
+.opciones-wrapper button:hover {
+  border-color: #d32f2f;
+  color: #d32f2f;
+  background-color: #fff5f5; /* Un rojo muy clarito de fondo */
+  transform: translateY(-2px); /* Se levanta un poquito */
+}
+
+/* 4. Estado Seleccionado: El estilo final fuerte */
 .opciones-wrapper button.selected {
-    background-color: #d32f2f;
-    color: #fff;
+  background-color: #d32f2f;
+  color: #fff;
+  border-color: #d32f2f;
+  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4); /* Sombra roja brillante */
+  transform: translateY(0); /* Vuelve a su sitio o se mantiene */
 }

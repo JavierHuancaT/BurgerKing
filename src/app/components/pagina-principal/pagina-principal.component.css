@@ -240,12 +240,12 @@
 }
 
 .btn-add-to-cart {
-  background-color: #f57c00; /* BK orange */
+  background-color:#D4202A; /* BK orange */
   color: white;
 }
 
 .btn-add-to-cart:hover {
-  background-color: #e67000;
+  background-color: #D4202A;
 }
 
 .btn-edit-product {
@@ -258,10 +258,10 @@
 }
 
 .btn-personalizar {
-  background-color: #0d6efd; /* A shade of blue */
+  background-color: #fd8d0d; 
   color: white;
 }
 
 .btn-personalizar:hover {
-  background-color: #0b5ed7;
+  background-color:  #fd8d0d;
 }

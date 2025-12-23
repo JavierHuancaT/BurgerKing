@@ -64,7 +64,7 @@ export class PaginaPrincipalComponent {
       imagen: combo.imageData ?? ''
     };
     this.carritoService.agregarProducto(item);
-    this.router.navigate(['/carrito']);
+    this.router.navigate(['/']);
   }
 
   editProduct(combo: ComboConPromo) {

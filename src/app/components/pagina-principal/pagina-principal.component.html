@@ -37,13 +37,10 @@
 
         </div>
         <div class="combo-actions" *ngIf="selectedComboId === combo.id" (click)="$event.stopPropagation()">
-            <ng-container *ngIf="combo.personalizaciones && combo.personalizaciones.length > 0; else noPersonalizacion">
+            <ng-container *ngIf="combo.personalizaciones && combo.personalizaciones.length > 0">
                 <button class="btn-personalizar" (click)="personalize(combo)">Personalizar</button>
             </ng-container>
-            <ng-template #noPersonalizacion>
-                <button class="btn-add-to-cart" (click)="addToCart(combo)">Agregar al carrito</button>
-            </ng-template>
-            <button class="btn-edit-product" (click)="editProduct(combo)">Editar producto</button>
+            <button class="btn-add-to-cart" (click)="addToCart(combo)">Agregar al carrito</button>
         </div>
       </div>
     </ng-container>

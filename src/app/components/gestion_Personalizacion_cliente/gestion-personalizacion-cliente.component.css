@@ -44,10 +44,54 @@
 }
 
 .personalizacion-item input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  /* 1. Quitamos el estilo por defecto del navegador */
+  appearance: none;
+  -webkit-appearance: none; /* Para Safari/Chrome antiguos */
+  
+  /* 2. Definimos la caja base */
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc; /* Borde gris suave */
+  border-radius: 6px;     /* Bordes redondeados */
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out; /* Animación suave */
+  
+  /* 3. Centramos el "check" que pondremos después */
+  display: grid;
+  place-content: center;
 }
 
+/* Efecto Hover (al pasar el mouse) */
+.personalizacion-item input[type="checkbox"]:hover {
+  border-color: #d62300; /* Color de tu marca */
+  background-color: #fff5f5;
+}
+
+/* Estado CHECKED (Cuando está seleccionado) */
+.personalizacion-item input[type="checkbox"]:checked {
+  background-color: #d62300; /* Fondo rojo (ejemplo) */
+  border-color: #d62300;
+}
+
+/* El "ganchito" o tick (usamos un pseudo-elemento) */
+.personalizacion-item input[type="checkbox"]::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  /* Creamos la forma del check usando clip-path */
+  background-color: white;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  
+  /* Inicialmente oculto (escala 0) */
+  transform: scale(0);
+  transition: 0.2s transform ease-in-out;
+}
+
+/* Mostrar el ganchito cuando está checked */
+.personalizacion-item input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
 .total-section {
   display: flex;
   justify-content: space-between;
@@ -63,7 +107,7 @@
 }
 
 .btn-agregar {
-  background-color: var(--bk-green);
+  background-color: rgb(182, 29, 29);
   color: white;
   border: none;
   padding: 12px 24px;

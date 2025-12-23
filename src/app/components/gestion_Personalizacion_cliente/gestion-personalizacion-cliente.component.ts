@@ -19,7 +19,7 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   totalPrice: number = 0;
 
   constructor(
-    private route: ActivatedRoute, // 1. Inyectamos el servicio de rutas active
+    private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
     private carritoService: CarritoService,
@@ -31,10 +31,8 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 2. COMUNICACIÓN: Capturamos el parámetro 'id' que viene en la URL
     const productId = this.route.snapshot.paramMap.get('id');
     if (productId) {
-      // 3. Usamos el dato recibido para buscar el producto
       this.product = this.productService.findById(productId);
       if (this.product) {
         this.totalPrice = this.product.basePrice;
@@ -81,6 +79,7 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
 
     const item: ItemCarrito = {
       id: crypto.randomUUID?.() ?? String(Date.now()),
+      productId: this.product.id,
       nombre: this.product.name,
       precio: this.totalPrice,
       cantidad: 1,
@@ -88,6 +87,6 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
       imagen: this.product.imageData ?? ''
     };
     this.carritoService.agregarProducto(item);
-    this.router.navigate(['/carrito']);
+    this.router.navigate(['/']);
   }
 }
