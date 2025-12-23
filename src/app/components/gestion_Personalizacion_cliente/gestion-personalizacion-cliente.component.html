@@ -1,26 +1,111 @@
 <div class="personalizacion-container" *ngIf="product">
-  <div class="product-header">
-    <img [src]="product.imageData" [alt]="product.name" class="product-image">
-    <div class="product-info">
+  
+  <div class="wizard-header">
+    <div class="product-info-mini">
       <h1>{{ product.name }}</h1>
-      <p>{{ product.descripcion }}</p>
+      <span class="badge-contador">Producto {{ currentIndex + 1 }} de {{ totalQuantity }}</span>
     </div>
   </div>
 
-  <form [formGroup]="personalizationForm" (ngSubmit)="addToCart()">
+  <div class="product-header">
+    <img [src]="product.imageData || 'assets/default_product.png'" [alt]="product.name" class="product-image">
+    <div class="product-desc">
+      <p>{{ product.descripcion }}</p>
+      <p class="precio-actual">
+        Precio unidad: <strong>{{ currentPrice | currency:'CLP':'symbol':'1.0-0' }}</strong>
+      </p>
+    </div>
+  </div>
+
+  <form [formGroup]="personalizationForm">
+    
     <div class="personalizaciones-list" formArrayName="personalizaciones">
-      <h3 class="personalizaciones-title">Elige tus ingredientes:</h3>
+      <h3 class="personalizaciones-title">Elige tus ingredientes ({{ currentIndex + 1 }}/{{ totalQuantity }}):</h3>
+      
       <div *ngFor="let personalizacion of product.personalizaciones; let i = index" class="personalizacion-item">
-        <input type="checkbox" [formControlName]="i" (change)="onPersonalizationChange()">
+        <input type="checkbox" [formControlName]="i">
         <label>
           {{ personalizacion.nombre }} (+{{ personalizacion.precio | currency:'CLP':'symbol':'1.0-0' }})
         </label>
-      </div>
-    </div>
+      </div> </div>
 
-    <div class="total-section">
-      <h3>Total: {{ totalPrice | currency:'CLP':'symbol':'1.0-0' }}</h3>
-      <button type="submit" class="btn-agregar">Añadir al Carrito</button>
+    <div class="wizard-actions">
+      
+      <button type="button" 
+              class="btn-nav btn-secondary" 
+              (click)="prevItem()" 
+              [disabled]="currentIndex === 0">
+        &laquo; Anterior
+      </button>
+
+      <button type="button" 
+              class="btn-nav btn-primary" 
+              (click)="nextItem()" 
+              *ngIf="currentIndex < totalQuantity - 1">
+        Siguiente &raquo;
+      </button>
+
+      <button type="button" 
+              class="btn-nav btn-success" 
+              (click)="finishAndAddToCart()" 
+              *ngIf="currentIndex === totalQuantity - 1">
+        {{ isEditing ? 'Guardar Cambios' : 'Agregar Todo al Carrito' }}
+      </button>
+
     </div>
   </form>
 </div>
+
+<style>
+  .wizard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  .product-info-mini {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .badge-contador {
+    background-color: #ff8c00; /* Naranja estilo BK */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+  .precio-actual {
+    font-size: 1.1rem;
+    color: #333;
+    margin-top: 5px;
+  }
+  .wizard-actions {
+    display: flex;
+    justify-content: space-between; /* Separa los botones a los extremos */
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+  }
+  .btn-nav {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  .btn-secondary { background-color: #6c757d; color: white; }
+  .btn-primary { background-color: #007bff; color: white; }
+  .btn-success { background-color: #28a745; color: white; }
+  
+  .btn-nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>

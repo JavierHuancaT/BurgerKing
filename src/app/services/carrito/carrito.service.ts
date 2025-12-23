@@ -85,7 +85,6 @@ export class CarritoService {
         (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
     } else {
       // AL AGREGAR NUEVO, ASIGNAMOS UN ID ÚNICO DE CARRITO (cartItemId)
-      // Esto es vital para poder editarlo después sin confundirlo con otros iguales.
       actuales.push({ 
         ...producto, 
         cartItemId: producto.cartItemId || `cart-${Date.now()}-${Math.floor(Math.random() * 1000)}`, 
@@ -99,7 +98,7 @@ export class CarritoService {
     this.actualizarContador(actuales);
   }
 
-  // <--- NUEVO MÉTODO PARA ACTUALIZAR UN PRODUCTO EXISTENTE (Modo Edición)
+  // Actualizar un producto existente (Modo Edición)
   actualizarProducto(productoEditado: any): void {
     const actuales = [...this.productosSubject.value];
     
@@ -119,8 +118,22 @@ export class CarritoService {
     }
   }
 
-  // <--- NUEVO MÉTODO PARA OBTENER UN ITEM POR SU ID DE CARRITO
-  // Útil para pre-cargar el formulario cuando le das a "Editar"
+  // <--- MÉTODO FALTANTE AGREGADO AQUÍ
+  // Busca un ítem por su ID único (cartItemId) y lo elimina del array.
+  eliminarPorId(cartItemId: string): void {
+    const actuales = [...this.productosSubject.value];
+    const index = actuales.findIndex(p => p.cartItemId === cartItemId);
+
+    if (index !== -1) {
+      actuales.splice(index, 1);
+      this.productosSubject.next(actuales);
+      this.guardarEnLocal(actuales);
+      this.actualizarContador(actuales);
+    }
+  }
+  // ------------------------------------
+
+  // Obtener item por ID (para cargar formulario)
   obtenerItemPorId(cartItemId: string): any | undefined {
     return this.productosSubject.value.find(p => p.cartItemId === cartItemId);
   }
@@ -170,12 +183,6 @@ export class CarritoService {
   cerrarCarrito(): void { this.visibleSubject.next(false); }
 
   // ====== Confirmar pedido y persistir ======
-  /**
-   * Crea un pedido:
-   * - Detalle en `bk_pedido_<id>`
-   * - Fila en `bk_pedidos_index`
-   * Devuelve { id, key } o null si el carrito está vacío.
-   */
   confirmarPedido(opcionRetiro?: string, usuario?: UsuarioPedidoMeta): { id: string; key: string } | null {
     const items: ItemPedido[] = this.obtenerProductosSnapshot().map(p => ({
       nombre: p.nombre,
@@ -188,7 +195,7 @@ export class CarritoService {
     if (!items.length) return null;
 
     const subtotal = items.reduce((s, it) => s + it.precio * it.cantidad, 0);
-    const total = subtotal; // aquí puedes aplicar cupones/promos si corresponde
+    const total = subtotal; 
     const estadoInicial: PedidoEstado = 'PENDIENTE';
 
     const id = this.generarIdPedido();
@@ -203,7 +210,7 @@ export class CarritoService {
       items,
       subtotal,
       total,
-      estado: estadoInicial, // guardamos el estado en el detalle
+      estado: estadoInicial, 
     };
 
     // Detalle
@@ -225,11 +232,10 @@ export class CarritoService {
         total,
         itemCount: items.length,
         opcionRetiro,
-        estado: estadoInicial, // y también en el índice
+        estado: estadoInicial, 
       });
       localStorage.setItem(LS_IDX_PEDIDOS, JSON.stringify(idx));
 
-      // Opcional: notificación en la misma pestaña (para “tiempo real”)
       window.dispatchEvent(new Event('bk-pedidos-changed'));
     } catch (e) {
       console.warn('No se pudo actualizar índice de pedidos', e);
