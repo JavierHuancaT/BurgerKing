@@ -29,9 +29,11 @@
             
             <!-- Botón editar (solo si tiene productId) -->
             <!--propiedad [queryParams] para enviar el ID único del ítem y el modo de edición-->
+            <!--quantity: p.cantidad a los queryParams. Esto asegura que si tienes 5 productos en el carrito y le das a editar, 
+            la pantalla de personalización sepa que son 5 y no te resetee la cuenta a 1-->
             <a *ngIf="p.productId" 
                [routerLink]="['/personalizar', p.productId]" 
-               [queryParams]="{ mode: 'edit', cartItemId: p.cartItemId }"
+               [queryParams]="{ mode: 'edit', cartItemId: p.cartItemId, quantity: p.cantidad }"
                class="btn-editar"
                (click)="cerrar()">
               Editar

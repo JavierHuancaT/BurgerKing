@@ -38,7 +38,13 @@
         <button class="btn-agregar" (click)="agregarAlCarrito(producto); $event.stopPropagation()">
           Agregar al carrito
         </button>
-        <a [routerLink]="['/personalizar', producto.id]" class="btn-personalizar" *ngIf="producto.personalizaciones && producto.personalizaciones.length > 0">
+        
+        <!--el botón "Personalizar" debe enviar la cantidad que el usuario seleccionó en el contador (- 1 +). 
+        Si no lo hacemos, la siguiente pantalla no sabe si quieres 1 o 10-->
+        <a [routerLink]="['/personalizar', producto.id]" 
+           [queryParams]="{ quantity: cantidadDe(producto.id) }"
+           class="btn-personalizar" 
+           *ngIf="producto.personalizaciones && producto.personalizaciones.length > 0">
           Personalizar
         </a>
       </div>

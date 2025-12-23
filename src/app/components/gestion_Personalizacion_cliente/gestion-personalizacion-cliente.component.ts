@@ -18,9 +18,12 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   personalizationForm: FormGroup;
   totalPrice: number = 0;
 
-  // Variables para controlar el estado de Edición (Ya las tenías)
+  // Variables para controlar el estado de Edición
   isEditing: boolean = false;
   editingCartItemId: string | null = null;
+  
+  //Variable para almacenar la cantidad (Por defecto 1)
+  currentQuantity: number = 1;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,11 +40,15 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   ngOnInit(): void {
     const productId = this.route.snapshot.paramMap.get('id');
 
-    //LEER PARÁMETROS DE EDICIÓN
-    // Nos suscribimos a queryParams para saber si venimos en modo 'edit' y capturar el ID del item
+    // LEER PARÁMETROS DE EDICIÓN Y CANTIDAD
     this.route.queryParams.subscribe(params => {
       this.isEditing = params['mode'] === 'edit';
       this.editingCartItemId = params['cartItemId'];
+      
+      //Capturamos la cantidad si viene en la URL
+      if (params['quantity']) {
+        this.currentQuantity = +params['quantity']; // El "+" convierte string a número
+      }
     });
 
     if (productId) {
@@ -90,33 +97,33 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
     }
 
     // DECISIÓN DE ID
-    // Si estamos editando, usamos el ID viejo (editingCartItemId). Si es nuevo, generamos uno nuevo.
     const finalId = (this.isEditing && this.editingCartItemId) 
       ? this.editingCartItemId 
       : (crypto.randomUUID?.() ?? String(Date.now()));
 
-    // Construimos el objeto. Usamos 'any' para poder inyectar 'cartItemId' explícitamente.
+    // Construimos el objeto.
     const item: any = {
-      id: finalId,           // ID principal
-      cartItemId: finalId,   // <--- ID CRÍTICO: El servicio lo usará para encontrar qué actualizar
+      id: finalId,
+      cartItemId: finalId,
       productId: this.product.id,
       nombre: this.product.name,
       precio: this.totalPrice,
-      cantidad: 1,
+      
+      //Usamos la cantidad dinámica en lugar del "1" fijo
+      cantidad: this.currentQuantity, 
+      
       personalizaciones: selectedOpciones,
       imagen: this.product.imageData ?? ''
     };
 
-    // GUARDADO CONDICIONAL Y REDIRECCIÓN
+    // GUARDADO CONDICIONAL
     if (this.isEditing) {
-      // Si es edición -> Actualizamos
       this.carritoService.actualizarProducto(item);
     } else {
-      // Si es nuevo -> Agregamos
       this.carritoService.agregarProducto(item);
     }
 
-    // Redirigimos al carrito para ver los cambios (antes iba a '/')
+    // Redirigimos al catálogo
     this.router.navigate(['/catalogo']);
   }
 }
