@@ -1,0 +1,26 @@
+<div class="personalizacion-container" *ngIf="product">
+  <div class="product-header">
+    <img [src]="product.imageData" [alt]="product.name" class="product-image">
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <p>{{ product.descripcion }}</p>
+    </div>
+  </div>
+
+  <form [formGroup]="personalizationForm" (ngSubmit)="addToCart()">
+    <div class="personalizaciones-list" formArrayName="personalizaciones">
+      <h3 class="personalizaciones-title">Elige tus ingredientes:</h3>
+      <div *ngFor="let personalizacion of product.personalizaciones; let i = index" class="personalizacion-item">
+        <input type="checkbox" [formControlName]="i" (change)="onPersonalizationChange()">
+        <label>
+          {{ personalizacion.nombre }} (+{{ personalizacion.precio | currency:'CLP':'symbol':'1.0-0' }})
+        </label>
+      </div>
+    </div>
+
+    <div class="total-section">
+      <h3>Total: {{ totalPrice | currency:'CLP':'symbol':'1.0-0' }}</h3>
+      <button type="submit" class="btn-agregar">Añadir al Carrito</button>
+    </div>
+  </form>
+</div>

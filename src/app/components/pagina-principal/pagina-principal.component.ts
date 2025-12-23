@@ -6,42 +6,56 @@ import { Component } from '@angular/core';
   styleUrls: ['./pagina-principal.component.css']
 })
 export class PaginaPrincipalComponent {
-  combos = [
-  {
-    nombre: 'Whopper',
-    imagen: 'assets/whopper.png',
-    descripcion: 'Hamburguesa con carne a la parrilla, lechuga y tomate.',
-    precio: '$6.000'
-  },
-  {
-    nombre: 'Cheeseburger Doble',
-    imagen: 'assets/cheeseburger_doble.webp',
-    descripcion: 'Doble carne, doble queso, tomate, lechuga con papas fritas y bebida.',
-    precio: '$9.000'
-  },
-  {
-    nombre: 'Chicken Burger',
-    imagen: 'assets/chickenburger.webp',
-    descripcion: 'Filete de pollo, pepinillo, mayonesa, con papas fritas y bebida.',
-    precio: '$8.500'
-  },
-  {
-    nombre: 'Veggie Burger',
-    imagen: 'assets/veggieburger.webp',
-    descripcion: 'Hamburguesa vegetariana, queso, tomate con papas fritas y bebida.',
-    precio: '$8.000'
-  },
-    {
-    nombre: 'Nuggets',
-    imagen: 'assets/nuggets.png',
-    descripcion: 'Nuggets de pollo, salsa BBQ con papas fritas y bebida.',
-    precio: '$7.500'
-  },
-  {
-    nombre: 'Megastacker',
-    imagen: 'assets/megastacker.png',
-    descripcion: 'Hamburguesa con tocino, queso con papas fritas y bebida.',
-    precio: '$9.000'
-    }
-  ];
+
+  selectedComboId: string | null = null;
+
+  combos$: Observable<ComboConPromo[]> = combineLatest([
+    this.products.items$,
+    this.promos.items$
+  ]).pipe(
+    map(([products, _]) =>
+      products.map((p: Product): ComboConPromo => {
+        const { precioOferta, descuento } = this.promos.precioConPromo(p.basePrice, p.id);
+        return {
+          ...p,
+          precioOferta,
+          descuento
+        };
+      })
+    )
+  );
+
+  trackById = (_: number, it: { id: string }) => it.id;
+
+  constructor(
+    private products: ProductService,
+    private promos: PromocionService,
+    private router: Router,
+    private carritoService: CarritoService
+  ) {}
+
+  selectCombo(comboId: string) {
+    this.selectedComboId = this.selectedComboId === comboId ? null : comboId;
+  }
+
+  personalize(combo: ComboConPromo) {
+    this.router.navigate(['/personalizar', combo.id]);
+  }
+
+  addToCart(combo: ComboConPromo) {
+    const item: ItemCarrito = {
+      id: crypto.randomUUID?.() ?? String(Date.now()),
+      productId: combo.id,
+      nombre: combo.name,
+      precio: combo.precioOferta,
+      cantidad: 1,
+      imagen: combo.imageData ?? ''
+    };
+    this.carritoService.agregarProducto(item);
+    this.router.navigate(['/']);
+  }
+
+  editProduct(combo: ComboConPromo) {
+    this.router.navigate(['/admin/products', combo.id, 'edit']);
+  }
 }
