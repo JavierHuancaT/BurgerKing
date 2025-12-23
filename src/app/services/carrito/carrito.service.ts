@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from '../../auth/auth.service'; // <--- IMPORTACIÓN DEL AUTH SERVICE
 
-// ===== Tipos para pedidos =====
+// ==========================================
+// TIPOS Y ESTADOS DE PEDIDOS
+// ==========================================
 export type PedidoEstado =
   | 'PENDIENTE' | 'EN_COCINA' | 'LISTO' | 'EN_REPARTO' | 'COMPLETADO' | 'CANCELADO';
 
@@ -20,17 +23,16 @@ export interface UsuarioPedidoMeta {
 }
 
 export interface Pedido {
-  id: string;                 // p.ej. PED-2025-12-08T02:15:03.123Z-12345
+  id: string;                 
   fechaISO: string;
   usuario?: UsuarioPedidoMeta;
   opcionRetiro?: string;
   items: ItemPedido[];
   subtotal: number;
   total: number;
-  estado: PedidoEstado;       // nuevo en el detalle
+  estado: PedidoEstado;       
 }
 
-// Estructura de cada fila en el índice (bk_pedidos_index)
 type PedidoIndexRow = {
   id: string;
   key: string;
@@ -39,38 +41,70 @@ type PedidoIndexRow = {
   total?: number;
   itemCount?: number;
   opcionRetiro?: string;
-  estado?: PedidoEstado;      // nuevo en el índice
+  estado?: PedidoEstado;      
 };
 
-// Claves de LS
-const LS_CARRITO = 'carrito';
+// Claves base de LS (Nota: LS_CARRITO ya no es fija, es dinámica)
 const LS_IDX_PEDIDOS = 'bk_pedidos_index';
 const LS_PED_PREFIX = 'bk_pedido_';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
-  // Productos
-  private productosSubject = new BehaviorSubject<any[]>(this.cargarDesdeLocal());
+  
+  // <--- Variable para guardar el ID del usuario actual (o null si es invitado)
+  private currentUserId: string | null = null;
+
+  // Productos (Inicializamos vacío, esperaremos al Auth para cargar los correctos)
+  private productosSubject = new BehaviorSubject<any[]>([]);
   productos$ = this.productosSubject.asObservable();
 
-  // Visible (panel)
+  // Estado visual del panel (abierto/cerrado)
   private visibleSubject = new BehaviorSubject<boolean>(false);
   visible$ = this.visibleSubject.asObservable();
 
-  // Contador
-  private contadorSubject = new BehaviorSubject<number>(
-    this.calcularContador(this.productosSubject.value)
-  );
+  // Contador total de ítems
+  private contadorSubject = new BehaviorSubject<number>(0);
   contador$ = this.contadorSubject.asObservable();
 
-  constructor() {}
+  constructor(
+    private authService: AuthService // <--- INYECCIÓN REAL
+  ) {
+    // <--- SUSCRIPCIÓN REACTIVA AL USUARIO
+    // Cada vez que alguien hace login o logout, esto se ejecuta automáticamente.
+    // Esto permite cambiar el "cajón" del carrito en tiempo real.
+    this.authService.currentUser$.subscribe(user => {
+      // 1. Actualizamos el ID local en el servicio
+      this.currentUserId = user ? user.id : null; 
+      
+      // 2. Recargamos el carrito usando la nueva clave (Guest o UserID)
+      const productosDelUsuario = this.cargarDesdeLocal();
+      
+      // 3. Emitimos los nuevos productos para que la vista se actualice
+      this.productosSubject.next(productosDelUsuario);
+      this.actualizarContador(productosDelUsuario);
+    });
+  }
 
-  // ====== API carrito ======
+  // <--- GENERADOR DE CLAVE DINÁMICA
+  // Esta es la magia: decide en qué clave del localStorage guardar las cosas.
+  // Si hay usuario logueado -> 'carrito_user_123'
+  // Si es invitado -> 'carrito_guest'
+  private getStorageKey(): string {
+    if (this.currentUserId) {
+      return `carrito_user_${this.currentUserId}`; 
+    }
+    return 'carrito_guest'; // Carrito por defecto si no hay login
+  }
+
+  // ==========================================
+  // API DEL CARRITO (CRUD)
+  // ==========================================
 
   agregarProducto(producto: any): void {
     const actuales = [...this.productosSubject.value];
     
-    // Intentamos buscar si existe un producto idéntico (misma ID base, nombre y personalizaciones)
+    // Intentamos buscar si existe un producto idéntico (mismo ID y mismas personalizaciones)
+    // para agruparlos visualmente si el usuario así lo desea (aunque con el Wizard casi siempre serán únicos)
     const idx = actuales.findIndex(
       p =>
         p.productId === (producto.productId || producto.id) &&
@@ -80,11 +114,11 @@ export class CarritoService {
     );
 
     if (idx !== -1) {
-      // Si existe, solo aumentamos cantidad
-      actuales[idx].cantidad =
-        (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
+      // Si existe idéntico, solo aumentamos cantidad
+      actuales[idx].cantidad = (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
     } else {
       // AL AGREGAR NUEVO, ASIGNAMOS UN ID ÚNICO DE CARRITO (cartItemId)
+      // Esto es vital para poder editarlo después sin confundirlo con otros iguales.
       actuales.push({ 
         ...producto, 
         cartItemId: producto.cartItemId || `cart-${Date.now()}-${Math.floor(Math.random() * 1000)}`, 
@@ -98,28 +132,24 @@ export class CarritoService {
     this.actualizarContador(actuales);
   }
 
-  // Actualizar un producto existente (Modo Edición)
   actualizarProducto(productoEditado: any): void {
     const actuales = [...this.productosSubject.value];
-    
-    // Buscamos específicamente por el ID ÚNICO DEL CARRITO (cartItemId)
+    // Buscamos por el ID único de la fila del carrito
     const idx = actuales.findIndex(p => p.cartItemId === productoEditado.cartItemId);
 
     if (idx !== -1) {
-      // Reemplazamos el objeto completo con la nueva versión editada
       actuales[idx] = productoEditado;
-      
       this.productosSubject.next(actuales);
       this.guardarEnLocal(actuales);
       this.actualizarContador(actuales);
     } else {
-      // Fallback: Si por alguna razón no se encuentra, lo agregamos como nuevo
+      // Fallback: Si no se encuentra, lo agregamos como nuevo
       this.agregarProducto(productoEditado);
     }
   }
 
-  // <--- MÉTODO FALTANTE AGREGADO AQUÍ
-  // Busca un ítem por su ID único (cartItemId) y lo elimina del array.
+  // <--- MÉTODO VITAL PARA EL WIZARD
+  // Permite borrar un "pack" antiguo antes de agregar los productos desglosados individualmente.
   eliminarPorId(cartItemId: string): void {
     const actuales = [...this.productosSubject.value];
     const index = actuales.findIndex(p => p.cartItemId === cartItemId);
@@ -131,14 +161,12 @@ export class CarritoService {
       this.actualizarContador(actuales);
     }
   }
-  // ------------------------------------
 
-  // Obtener item por ID (para cargar formulario)
   obtenerItemPorId(cartItemId: string): any | undefined {
     return this.productosSubject.value.find(p => p.cartItemId === cartItemId);
   }
 
-  // Actualizar cantidad de un producto específico (por índice)
+  // Actualizar cantidad simple (+ / -) desde el panel del carrito
   actualizarCantidad(index: number, nuevaCantidad: number): void {
     const actuales = [...this.productosSubject.value];
     if (index >= 0 && index < actuales.length && nuevaCantidad > 0) {
@@ -147,7 +175,6 @@ export class CarritoService {
       this.guardarEnLocal(actuales);
       this.actualizarContador(actuales);
     } else if (nuevaCantidad <= 0) {
-      // Si la cantidad llega a 0, eliminar el producto
       this.eliminarProducto(index);
     }
   }
@@ -170,7 +197,8 @@ export class CarritoService {
 
   vaciarCarrito(): void {
     this.productosSubject.next([]);
-    localStorage.removeItem(LS_CARRITO);
+    // <--- IMPORTANTE: Borramos solo la clave del usuario actual
+    localStorage.removeItem(this.getStorageKey());
     this.actualizarContador([]);
   }
 
@@ -178,11 +206,14 @@ export class CarritoService {
     return this.productosSubject.value;
   }
 
+  // Control visual del panel lateral
   toggleVisible(): void { this.visibleSubject.next(!this.visibleSubject.value); }
   abrirCarrito(): void { this.visibleSubject.next(true); }
   cerrarCarrito(): void { this.visibleSubject.next(false); }
 
-  // ====== Confirmar pedido y persistir ======
+  // ==========================================
+  // CONFIRMACIÓN Y PERSISTENCIA DE PEDIDOS
+  // ==========================================
   confirmarPedido(opcionRetiro?: string, usuario?: UsuarioPedidoMeta): { id: string; key: string } | null {
     const items: ItemPedido[] = this.obtenerProductosSnapshot().map(p => ({
       nombre: p.nombre,
@@ -213,7 +244,7 @@ export class CarritoService {
       estado: estadoInicial, 
     };
 
-    // Detalle
+    // Guardamos el detalle del pedido
     try {
       localStorage.setItem(key, JSON.stringify(pedido));
     } catch (e) {
@@ -221,7 +252,7 @@ export class CarritoService {
       return null;
     }
 
-    // Índice
+    // Guardamos en el índice general de pedidos
     try {
       const idx = this.leerIndice();
       idx.push({
@@ -244,15 +275,22 @@ export class CarritoService {
     return { id, key };
   }
 
-  // ===== Helpers de persistencia =====
+  // ==========================================
+  // HELPERS PRIVADOS (PERSISTENCIA)
+  // ==========================================
+  
   private guardarEnLocal(productos: any[]): void {
-    try { localStorage.setItem(LS_CARRITO, JSON.stringify(productos)); }
+    try { 
+      // <--- USAMOS LA CLAVE DINÁMICA
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(productos)); 
+    }
     catch (e) { console.warn('No se pudo guardar carrito en localStorage', e); }
   }
 
   private cargarDesdeLocal(): any[] {
     try {
-      const raw = localStorage.getItem(LS_CARRITO);
+      // <--- USAMOS LA CLAVE DINÁMICA
+      const raw = localStorage.getItem(this.getStorageKey());
       return raw ? JSON.parse(raw) : [];
     } catch { return []; }
   }

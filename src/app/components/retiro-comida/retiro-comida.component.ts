@@ -15,4 +15,9 @@ export class RetiroComidaComponent {
     this.opcionElegida = opcion;
     this.opcionSeleccionada.emit(opcion);
   }
+
+  //Permite limpiar la selección desde fuera
+  reset(): void {
+    this.opcionElegida = '';
+  }
 }
