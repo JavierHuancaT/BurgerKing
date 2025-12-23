@@ -27,7 +27,7 @@ export interface Pedido {
   items: ItemPedido[];
   subtotal: number;
   total: number;
-  estado: PedidoEstado;       // 👈 nuevo en el detalle
+  estado: PedidoEstado;       // nuevo en el detalle
 }
 
 // Estructura de cada fila en el índice (bk_pedidos_index)
@@ -39,7 +39,7 @@ type PedidoIndexRow = {
   total?: number;
   itemCount?: number;
   opcionRetiro?: string;
-  estado?: PedidoEstado;      // 👈 nuevo en el índice
+  estado?: PedidoEstado;      // nuevo en el índice
 };
 
 // Claves de LS
@@ -66,22 +66,29 @@ export class CarritoService {
   constructor() {}
 
   // ====== API carrito ======
+
   agregarProducto(producto: any): void {
     const actuales = [...this.productosSubject.value];
+    
+    // Intentamos buscar si existe un producto idéntico (misma ID base, nombre y personalizaciones)
     const idx = actuales.findIndex(
       p =>
-        p.productId === producto.productId &&
+        p.productId === (producto.productId || producto.id) &&
         p.nombre === producto.nombre &&
         JSON.stringify(p.personalizaciones || {}) ===
           JSON.stringify(producto.personalizaciones || {})
     );
 
     if (idx !== -1) {
+      // Si existe, solo aumentamos cantidad
       actuales[idx].cantidad =
         (actuales[idx].cantidad || 0) + (producto.cantidad || 1);
     } else {
+      // AL AGREGAR NUEVO, ASIGNAMOS UN ID ÚNICO DE CARRITO (cartItemId)
+      // Esto es vital para poder editarlo después sin confundirlo con otros iguales.
       actuales.push({ 
         ...producto, 
+        cartItemId: producto.cartItemId || `cart-${Date.now()}-${Math.floor(Math.random() * 1000)}`, 
         productId: producto.productId || producto.id,
         cantidad: producto.cantidad || 1 
       });
@@ -92,7 +99,33 @@ export class CarritoService {
     this.actualizarContador(actuales);
   }
 
-  // Actualizar cantidad de un producto específico
+  // <--- NUEVO MÉTODO PARA ACTUALIZAR UN PRODUCTO EXISTENTE (Modo Edición)
+  actualizarProducto(productoEditado: any): void {
+    const actuales = [...this.productosSubject.value];
+    
+    // Buscamos específicamente por el ID ÚNICO DEL CARRITO (cartItemId)
+    const idx = actuales.findIndex(p => p.cartItemId === productoEditado.cartItemId);
+
+    if (idx !== -1) {
+      // Reemplazamos el objeto completo con la nueva versión editada
+      actuales[idx] = productoEditado;
+      
+      this.productosSubject.next(actuales);
+      this.guardarEnLocal(actuales);
+      this.actualizarContador(actuales);
+    } else {
+      // Fallback: Si por alguna razón no se encuentra, lo agregamos como nuevo
+      this.agregarProducto(productoEditado);
+    }
+  }
+
+  // <--- NUEVO MÉTODO PARA OBTENER UN ITEM POR SU ID DE CARRITO
+  // Útil para pre-cargar el formulario cuando le das a "Editar"
+  obtenerItemPorId(cartItemId: string): any | undefined {
+    return this.productosSubject.value.find(p => p.cartItemId === cartItemId);
+  }
+
+  // Actualizar cantidad de un producto específico (por índice)
   actualizarCantidad(index: number, nuevaCantidad: number): void {
     const actuales = [...this.productosSubject.value];
     if (index >= 0 && index < actuales.length && nuevaCantidad > 0) {
@@ -139,8 +172,8 @@ export class CarritoService {
   // ====== Confirmar pedido y persistir ======
   /**
    * Crea un pedido:
-   *   - Detalle en `bk_pedido_<id>`
-   *   - Fila en `bk_pedidos_index`
+   * - Detalle en `bk_pedido_<id>`
+   * - Fila en `bk_pedidos_index`
    * Devuelve { id, key } o null si el carrito está vacío.
    */
   confirmarPedido(opcionRetiro?: string, usuario?: UsuarioPedidoMeta): { id: string; key: string } | null {
@@ -170,7 +203,7 @@ export class CarritoService {
       items,
       subtotal,
       total,
-      estado: estadoInicial, // 👈 guardamos el estado en el detalle
+      estado: estadoInicial, // guardamos el estado en el detalle
     };
 
     // Detalle
@@ -192,7 +225,7 @@ export class CarritoService {
         total,
         itemCount: items.length,
         opcionRetiro,
-        estado: estadoInicial, // 👈 y también en el índice
+        estado: estadoInicial, // y también en el índice
       });
       localStorage.setItem(LS_IDX_PEDIDOS, JSON.stringify(idx));
 

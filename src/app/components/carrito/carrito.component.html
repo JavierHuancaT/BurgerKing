@@ -28,8 +28,10 @@
             <div class="item-name">{{ p.nombre }}</div>
             
             <!-- Botón editar (solo si tiene productId) -->
+            <!--propiedad [queryParams] para enviar el ID único del ítem y el modo de edición-->
             <a *ngIf="p.productId" 
                [routerLink]="['/personalizar', p.productId]" 
+               [queryParams]="{ mode: 'edit', cartItemId: p.cartItemId }"
                class="btn-editar"
                (click)="cerrar()">
               Editar

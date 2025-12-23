@@ -18,6 +18,10 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
   personalizationForm: FormGroup;
   totalPrice: number = 0;
 
+  // Variables para controlar el estado de Edición (Ya las tenías)
+  isEditing: boolean = false;
+  editingCartItemId: string | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -32,6 +36,14 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
 
   ngOnInit(): void {
     const productId = this.route.snapshot.paramMap.get('id');
+
+    //LEER PARÁMETROS DE EDICIÓN
+    // Nos suscribimos a queryParams para saber si venimos en modo 'edit' y capturar el ID del item
+    this.route.queryParams.subscribe(params => {
+      this.isEditing = params['mode'] === 'edit';
+      this.editingCartItemId = params['cartItemId'];
+    });
+
     if (productId) {
       this.product = this.productService.findById(productId);
       if (this.product) {
@@ -69,7 +81,7 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
 
     const selectedOpciones: OpcionPersonalizacion[] = [];
     const selectedPersonalizaciones = this.personalizationForm.value.personalizaciones;
-     if (this.product.personalizaciones) {
+    if (this.product.personalizaciones) {
       selectedPersonalizaciones.forEach((isSelected: boolean, index: number) => {
         if (isSelected) {
           selectedOpciones.push(this.product!.personalizaciones![index]);
@@ -77,8 +89,16 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
       });
     }
 
-    const item: ItemCarrito = {
-      id: crypto.randomUUID?.() ?? String(Date.now()),
+    // DECISIÓN DE ID
+    // Si estamos editando, usamos el ID viejo (editingCartItemId). Si es nuevo, generamos uno nuevo.
+    const finalId = (this.isEditing && this.editingCartItemId) 
+      ? this.editingCartItemId 
+      : (crypto.randomUUID?.() ?? String(Date.now()));
+
+    // Construimos el objeto. Usamos 'any' para poder inyectar 'cartItemId' explícitamente.
+    const item: any = {
+      id: finalId,           // ID principal
+      cartItemId: finalId,   // <--- ID CRÍTICO: El servicio lo usará para encontrar qué actualizar
       productId: this.product.id,
       nombre: this.product.name,
       precio: this.totalPrice,
@@ -86,7 +106,17 @@ export class GestionPersonalizacionClienteComponent implements OnInit {
       personalizaciones: selectedOpciones,
       imagen: this.product.imageData ?? ''
     };
-    this.carritoService.agregarProducto(item);
-    this.router.navigate(['/']);
+
+    // GUARDADO CONDICIONAL Y REDIRECCIÓN
+    if (this.isEditing) {
+      // Si es edición -> Actualizamos
+      this.carritoService.actualizarProducto(item);
+    } else {
+      // Si es nuevo -> Agregamos
+      this.carritoService.agregarProducto(item);
+    }
+
+    // Redirigimos al carrito para ver los cambios (antes iba a '/')
+    this.router.navigate(['/catalogo']);
   }
 }
